@@ -1,0 +1,25 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="app-header">
+  <template>
+    <h2>[[app.title]]</h2>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'app-header',
+      properties: {
+        app: {
+          type: Object,
+          value: () => {
+            return {
+              title: "Nice App",
+              rating: 3.2,
+              platforms: ['Windows', 'Linux', 'Android']
+            }
+          }
+        }
+      }
+    });
+  </script>
+</dom-module>
