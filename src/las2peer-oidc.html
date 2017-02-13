@@ -1,0 +1,44 @@
+<link rel="import" href="../../bower_components/openidconnect-signin/openidconnect-signin.html">
+
+<dom-module id="las2peer-oidc">
+  <template>
+    <div>
+      <openidconnect-signin scopes="openid profile" signed-in="{{signedIn}}" client-id="[[oidcClientId]]" server="[[oidcProvider]]"
+                            on-openidconnect-signin-aware-success="signin" on-openidconnect-signin-aware-signed-out="signout"
+      ></openidconnect-signin>
+      <span>[[user.preferred_username]]</span>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'las2peer-oidc',
+      properties: {
+        authFetch: {value:function(){
+          return function(url, request) {
+            if(this.signedIn) {
+              request.headers = request.headers || {}
+              Object.assign(request.headers, {"access_token":this.accessToken, "oidc_provider":this.oidcProvider})
+            }
+            return fetch(url, request)
+          }.bind(this)
+        },notify:true}
+      },
+      signin: function(e) {
+        this.accessToken = e.detail.access_token
+        fetch(`${this.oidcProvider}/.well-known/openid-configuration`)
+        .then(r => r.json())
+        .then(d =>
+          fetch(d.userinfo_endpoint, {headers:{"Authorization":`Bearer ${this.accessToken}`}})
+          .then(r => r.json())
+          .then(d => this.set("user",d))
+          .catch(e => console.error(e))
+        )
+        .catch(e => console.error(e))
+      },
+      signout: function() {
+        this.set("user",null)
+      }
+    });
+  </script>
+</dom-module>
