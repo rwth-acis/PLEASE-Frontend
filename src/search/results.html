@@ -1,0 +1,36 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="search-results">
+  <template>
+    <style>
+      a {
+        display: block
+      }
+    </style>
+    <template is="dom-repeat" items="[[results]]">
+      <a href="#apps/[[item.app]]">
+        <strong>[[item.rating]]</strong><span>[[item.description]]</span>
+      </a>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'search-results',
+      properties: {
+        results: {
+          type: Array,
+          value: () => [{
+            app: 7,
+            description: "some description",
+            rating: 3.78
+          },{
+            app: 14,
+            description: "not so nice app",
+            rating: 1.123
+          }]
+        }
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,20 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="app-configuration">
+  <template>
+    <textarea readonly>{{_tostring(configuration)}}</textarea>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'app-configuration',
+      properties: {
+        configuration: {
+          type: Object,
+          value: () => {}
+        }
+      },
+      _tostring: function(o) {return JSON.stringify(o,null,2)}
+    });
+  </script>
+</dom-module>

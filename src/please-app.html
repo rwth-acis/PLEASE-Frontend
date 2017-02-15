@@ -1,14 +1,49 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="./app/header.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="./las2peer-oidc.html">
+<link rel="import" href="./app/page.html">
+<link rel="import" href="./app/create/page.html">
+<link rel="import" href="./search/page.html">
 
 <dom-module id="please-app">
   <template>
-    <app-header></app-header>
+    <las2peer-oidc id="las2peer_oidc" oidc-client-id="[[oidcClientId]]" oidc-provider="[[oidcProvider]]" auth-fetch="{{authFetch}}"></las2peer-oidc>
+    <nav>
+      <a href="#apps">search</a>
+      <a href="#apps/new">new app</a>
+    </nav>
+    <iron-pages selected=[[selected]]>
+      <search-page appmetadata-url=[[appmetadataUrl]]></search-page>
+      <app-page app=[[selectedApp]] appmetadata-url=[[appmetadataUrl]] auth-fetch=[[authFetch]]></app-page>
+      <app-create-page appmetadata-url=[[appmetadataUrl]] auth-fetch=[[authFetch]]></app-create-page>
+    </iron-pages>
   </template>
 
   <script>
     Polymer({
       is: 'please-app',
+      properties: {
+        appmetadataUrl: String
+      },
+      attached: function() {
+        window.addEventListener('hashchange', (e) => {this.route(window.location.hash)})
+        this.route(window.location.hash)
+      },
+      route: function(hash) {
+        switch(true) {
+          case /^#apps\/?$/.test(hash):
+            this.set('selected', 0)
+            break
+          case /^#apps\/new$/.test(hash):
+            this.set('selected', 2)
+            break
+          case /^#apps\/[0-9]+$/.test(hash):
+            this.set('selectedApp', hash.match(/([0-9]+)/)[1])
+            this.set('selected', 1)
+            break
+        }
+      }
     });
   </script>
 </dom-module>

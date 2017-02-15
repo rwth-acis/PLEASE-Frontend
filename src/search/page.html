@@ -1,0 +1,40 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="./input.html">
+<link rel="import" href="./results.html">
+
+<dom-module id="search-page">
+  <template>
+    <search-input appmetadata-url="[[appmetadataUrl]]" query-url={{queryUrl}}></search-input>
+    <search-results results=[[results]]></search-results>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'search-page',
+      properties: {
+        apps: {
+          type: Array,
+          value: () => [{
+            app: 7,
+            description: "some description",
+            rating: 3.78
+          },{
+            app: 14,
+            description: "not so nice app",
+            rating: 1.123
+          }]
+        },
+        queryUrl: {
+          type: String,
+          observer: 'queryChange'
+        }
+      },
+      queryChange: function() {
+        fetch(this.queryUrl)
+        .then(response => response.json())
+        .then(data => this.set('results', data))
+        .catch(error => console.error(error))
+      }
+    });
+  </script>
+</dom-module>

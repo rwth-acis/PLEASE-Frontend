@@ -1,0 +1,47 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="search-input">
+  <template>
+    <select id="platform" on-change="updateQueryUrl">
+      <option value="All">All</option>
+      <template is="dom-repeat" items="[[platforms]]">
+        <option value="[[item]]">[[item]]</option>
+      </template>
+    </select>
+    <input id="searchterms" on-input="updateQueryUrl" placeholder="search term1 term2">
+  </template>
+
+  <script>
+    Polymer({
+      is: 'search-input',
+      properties: {
+        platforms: {
+          type: Array,
+          value: () => []
+        },
+        changeCallback: Number,
+        queryUrl: {
+          notify: true
+        }
+      },
+      ready: function() {
+        fetch(`${this.appmetadataUrl}/platform`)
+        .then(response => response.json())
+        .then(data => this.set('platforms', data))
+        .catch(error => console.error(error))
+      },
+      attached: function() {
+        this.updateQueryUrl()
+      },
+      updateQueryUrl: function() {
+        if(this.$.searchterms.value == "")
+          this.set('queryUrl', `${this.appmetadataUrl}/platform/${this.$.platform.value}`)
+        else
+          this.set('queryUrl', `${this.appmetadataUrl}/search?q=${this.$.searchterms.value}`)
+      },
+      updatePlatform: function(e) {
+        console.log(e)
+      }
+    });
+  </script>
+</dom-module>

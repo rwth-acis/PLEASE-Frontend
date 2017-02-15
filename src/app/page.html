@@ -1,0 +1,46 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="./header.html">
+<link rel="import" href="./description.html">
+<link rel="import" href="./configuration.html">
+<link rel="import" href="./comments.html">
+
+<dom-module id="app-page">
+  <template>
+    <app-header header=[[header]]></app-header>
+    <app-description description=[[parsedDescription]]></app-description>
+    <h2>Configuration</h2>
+    <app-configuration configuration=[[appData]]></app-configuration>
+    <h2>Comments</h2>
+    <app-comments appmetadata-url=[[appmetadataUrl]] app=[[app]] auth-fetch=[[authFetch]]></app-comments>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'app-page',
+      properties: {
+        app: {
+          type: Number,
+          value: -1,
+          observer: 'update'
+        },
+        appmetadataUrl: String
+      },
+      update: function() {
+        if(this.app != -1) {
+          fetch(`${this.appmetadataUrl}/apps/${this.app}`)
+          .then(response => response.json())
+          .then(data => {
+            this.set('header', {
+              title: data.description.match(/#([^#\n]+)/)[1],
+              rating: data.rating,
+              platforms: ['Windows','Linux']
+            })
+            this.set('parsedDescription', [{label:"Summary",content:[data.description]}])
+            this.set('appData', data)
+          })
+          .catch(error => console.error(error))
+        }
+      }
+    });
+  </script>
+</dom-module>

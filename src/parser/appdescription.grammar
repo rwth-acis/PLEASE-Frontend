@@ -1,0 +1,18 @@
+App ← :'\n'* Title :'\n'+ Props :'\n'* Tabs
+
+Title ← :'#' :' '* [^\n]+
+
+Props ← (:'@' (PropSource | PopsKeywords | PropReqbaz | PropSupport | PropLicense | PropPic | PropUnknown) '\n')*
+PropSource ← :'source ' [^\n]+
+PropKeywords ← :'keywords ' (Keyword :' '?)+
+Keyword ← [^ \n]+
+PropReqbaz ← :'reqbaz ' [0-9]+
+PropSupport ← :'support ' [^\n]+
+PropLicense ← :'license ' [^\n]+
+PropPic ← :'picture ' [^\n]+
+PropUnknown ← [^\n]*
+
+Tabs ← Tab+
+Tab ← Header :'\n'+ Text
+Header ← :'##' :' '* [^\n]*
+Text ← (!'\n##' .)*

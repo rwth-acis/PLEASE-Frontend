@@ -1,15 +1,24 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-rating/paper-rating.html">
 
 <dom-module id="app-header">
   <template>
-    <h2>[[app.title]]</h2>
+    <style>
+      :host {
+        --paper-rating-active-color: #ff0000;
+        --paper-rating-inactive-color: #000000;
+      }
+    </style>
+    <h2>[[header.title]]</h2>
+    <paper-rating max="5" rating=3></paper-rating>
+    <span>[[_platformstring(header.platforms)]]</span>
   </template>
 
   <script>
     Polymer({
       is: 'app-header',
       properties: {
-        app: {
+        header: {
           type: Object,
           value: () => {
             return {
@@ -19,7 +28,8 @@
             }
           }
         }
-      }
+      },
+      _platformstring: (platforms) => platforms.join(' / ')
     });
   </script>
 </dom-module>

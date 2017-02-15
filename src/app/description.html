@@ -1,0 +1,42 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+
+<dom-module id="app-description">
+  <template>
+    <paper-tabs selected="{{selectedTab}}">
+      <template is="dom-repeat" items="[[description]]">
+        <paper-tab>[[item.label]]</paper-tab>
+      </template>
+    </paper-tabs>
+    <iron-pages selected="[[selectedTab]]">
+      <template is="dom-repeat" items="[[description]]">
+        <div>
+          <p>[[item.content]]<p>
+        </div>
+      </template>
+    </iron-pages>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'app-description',
+      properties: {
+        description: {
+          type: Array,
+          value: () => [{
+            label: "Summary",
+            content: ["the app is nice"]
+          },{
+            label: "Usage",
+            content: ["the usage is self-explanatory"]
+          }]
+        },
+        selectedTab: {
+          type: Number,
+          value: 0
+        }
+      }
+    });
+  </script>
+</dom-module>
