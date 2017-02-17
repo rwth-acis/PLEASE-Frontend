@@ -17,18 +17,6 @@
   <script>
     Polymer({
       is: 'app-header',
-      properties: {
-        header: {
-          type: Object,
-          value: () => {
-            return {
-              title: "Nice App",
-              rating: 3.2,
-              platforms: ['Windows', 'Linux', 'Android']
-            }
-          }
-        }
-      },
       _platformstring: (platforms) => platforms.join(' / ')
     });
   </script>

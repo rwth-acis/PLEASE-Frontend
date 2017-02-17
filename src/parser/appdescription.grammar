@@ -1,8 +1,8 @@
-App ← :'\n'* Title :'\n'+ Props :'\n'* Tabs
+App ← :'\n'* Title? :'\n'* Props :'\n'* Tabs
 
 Title ← :'#' :' '* [^\n]+
 
-Props ← (:'@' (PropSource | PopsKeywords | PropReqbaz | PropSupport | PropLicense | PropPic | PropUnknown) '\n')*
+Props ← (:'@' (PropSource | PropKeywords | PropReqbaz | PropSupport | PropLicense | PropPic | PropUnknown) :'\n')*
 PropSource ← :'source ' [^\n]+
 PropKeywords ← :'keywords ' (Keyword :' '?)+
 Keyword ← [^ \n]+
@@ -13,6 +13,6 @@ PropPic ← :'picture ' [^\n]+
 PropUnknown ← [^\n]*
 
 Tabs ← Tab+
-Tab ← Header :'\n'+ Text
+Tab ← Header? :'\n'* (Block :'\n'*)*
 Header ← :'##' :' '* [^\n]*
-Text ← (!'\n##' .)*
+Block ← (!'##' !'\n\n' .)+

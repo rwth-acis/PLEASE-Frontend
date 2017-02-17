@@ -6,8 +6,8 @@
 
 <dom-module id="app-page">
   <template>
-    <app-header header=[[header]]></app-header>
-    <app-description description=[[parsedDescription]]></app-description>
+    <app-header header=[[_header(appData,parsedDescription)]]></app-header>
+    <app-description description=[[parsedDescription]] parse-description={{parseDescription}}></app-description>
     <h2>Configuration</h2>
     <app-configuration configuration=[[appData]]></app-configuration>
     <h2>Comments</h2>
@@ -23,23 +23,45 @@
           value: -1,
           observer: 'update'
         },
-        appmetadataUrl: String
+        appmetadataUrl: String,
+        parsedDescription: {
+          computed: '_parsedDescription(appData,parseDescription)'
+        }
       },
       update: function() {
         if(this.app != -1) {
           fetch(`${this.appmetadataUrl}/apps/${this.app}`)
           .then(response => response.json())
           .then(data => {
-            this.set('header', {
-              title: data.description.match(/#([^#\n]+)/)[1],
-              rating: data.rating,
-              platforms: ['Windows','Linux']
-            })
-            this.set('parsedDescription', [{label:"Summary",content:[data.description]}])
             this.set('appData', data)
-          })
-          .catch(error => console.error(error))
+          }).catch(console.error)
         }
+      },
+      _parsedDescription: function(appData, parseDescription) {
+        if (!appData || !parseDescription) {
+          return {title:'Load...',tabs:[]}
+        } else {
+          ast = parseDescription(appData.description)
+          return {
+            title: (c = ast.children.find(c => c.name == 'Title')) ? c.children[0] : 'No Title',
+            tabs: ast.children.find(c => c.name == 'Tabs').children.map(c => ({
+              header: (cc = c.children.find(c => c.name == 'Header')) ? cc.children[0] : '',
+              blocks: c.children.filter(c => c.name == 'Block').map(c => ({
+                content: c.children[0]
+              }))
+            }))
+          }
+        }
+      },
+      _header: function(appData, parsedDescription) {
+        if (!appData || !parsedDescription) {
+          return {title: 'Load...',rating: 3, platforms: []}
+        } else
+          return {
+            title: parsedDescription.title,
+            rating: appData.rating,
+            platforms: appData.platforms
+          }
       }
     });
   </script>

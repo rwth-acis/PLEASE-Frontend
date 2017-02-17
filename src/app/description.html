@@ -1,18 +1,21 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<script src="../../node_modules/adabru-parser/abp.js"></script>
 
 <dom-module id="app-description">
   <template>
     <paper-tabs selected="{{selectedTab}}">
-      <template is="dom-repeat" items="[[description]]">
-        <paper-tab>[[item.label]]</paper-tab>
+      <template is="dom-repeat" items="[[description.tabs]]">
+        <paper-tab>[[item.header]]</paper-tab>
       </template>
     </paper-tabs>
     <iron-pages selected="[[selectedTab]]">
-      <template is="dom-repeat" items="[[description]]">
+      <template is="dom-repeat" items="[[description.tabs]]">
         <div>
-          <p>[[item.content]]<p>
+          <template is="dom-repeat" items="[[item.blocks]]">
+            <p>[[item.content]]<p>
+          </template>
         </div>
       </template>
     </iron-pages>
@@ -22,20 +25,31 @@
     Polymer({
       is: 'app-description',
       properties: {
-        description: {
-          type: Array,
-          value: () => [{
-            label: "Summary",
-            content: ["the app is nice"]
-          },{
-            label: "Usage",
-            content: ["the usage is self-explanatory"]
-          }]
-        },
         selectedTab: {
           type: Number,
           value: 0
+        },
+        parseDescription: {
+          value: null,
+          notify: true
+        },
+        description: {
+          notify: true,
+          observer: 'update'
         }
+      },
+      created: function() {
+        fetch('/src/parser/appdescription.json')
+        .then(r => r.json())
+        .then(d => {
+          this.set('parseDescription', function(text) {
+              return abp.parseSync(text, d)
+            }.bind(this)
+          )
+        }).catch(console.error)
+      },
+      update: function() {
+        this.set('selectedTab', 0)
       }
     });
   </script>
