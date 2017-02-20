@@ -2,7 +2,7 @@
 
 <dom-module id="jsoneditor-enum">
   <template>
-    <select value="{{json}}">
+    <select value="[[json]]" on-change="update">
     <template is="dom-repeat" items="[[schema.values]]">
       <option value="[[item]]">[[item]]</option>
     </template>
@@ -10,7 +10,10 @@
 
   <script>
     Polymer({
-      is: 'jsoneditor-enum'
+      is: 'jsoneditor-enum',
+      update: function(e) {
+        this.setValue(e.target.value)
+      }
     });
   </script>
 </dom-module>

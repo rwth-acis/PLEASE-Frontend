@@ -4,19 +4,11 @@
 <link rel="import" href="./configuration.html">
 <link rel="import" href="./comments.html">
 
-<link rel="import" href="./jsoneditor/string.html">
-<link rel="import" href="./jsoneditor/enum.html">
-<link rel="import" href="./jsoneditor/array.html">
-<link rel="import" href="./jsoneditor/object.html">
-
 <dom-module id="app-page">
   <template>
     <app-header header=[[_header(appData,parsedDescription)]]></app-header>
     <app-description description=[[parsedDescription]] parse-description={{parseDescription}}></app-description>
     <h2>Configuration</h2>
-    <!-- <jsoneditor-string json={{myjson}} schema="[[myschema]]"></jsoneditor-string> -->
-    <jsoneditor-array json={{myjson}} schema="[[myschema]]"></jsoneditor-array>
-    <!-- <jsoneditor-object json={{myjson}} schema="[[myschema]]"></jsoneditor-object> -->
     <app-configuration configuration=[[appData]]></app-configuration>
     <h2>Comments</h2>
     <app-comments appmetadata-url=[[appmetadataUrl]] app=[[app]] auth-fetch=[[authFetch]]></app-comments>
@@ -29,43 +21,6 @@
         console.log(this.myjson)
       },
       properties: {
-        // myjson: {value: 'as'},
-        // myschema: {value: {
-        //   type: 'string',
-        //   placeholder: 'yeah'
-        // }},
-        // myjson: {value: {a:'aa'},observer:'print_myjson',notify:true},
-        // myschema: {value: {
-        //   type: 'object',
-        //   props: {
-        //     a: {
-        //       type: 'string',
-        //       placeholder: 'some A'
-        //     },
-        //     b: {
-        //       type: 'string',
-        //       placeholder: 'some B'
-        //     },
-        //     c: {
-        //       type: 'string',
-        //       placeholder: 'some C'
-        //     }
-        //   },
-        //   addProp: {
-        //     name: 'version',
-        //     type: 'string',
-        //     placeholder: 'v1.2.0'
-        //   },
-        //   required: ['c']
-        // }},
-        myjson: {value: ['a','b'],observer:'print_myjson',notify:true},
-        myschema: {value: {
-          type: 'array',
-          child: {
-            type: 'string',
-            placeholder: 'yeah'
-          }
-        }},
         app: {
           type: Number,
           value: -1,

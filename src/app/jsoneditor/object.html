@@ -19,9 +19,11 @@
     <ul>
       <template id="list" is="dom-repeat" items="[[elements(schema,json,json.*)]]">
         <li>
-          <input autofocus="[[equals(focused,item.name)]]" disabled=[[isFixed(item.name,schema)]] class$=[[cssClass(item.name,json,schema)]] value=[[item.name]] on-input="updateKey">
-          <template is="dom-if" if="[[equals(item.schema.type,'string')]]"><jsoneditor-string schema="[[item.schema]]" json="{{item.json}}"></jsoneditor-string></template>
-          <template is="dom-if" if="[[equals(item.schema.type,'object')]]"><jsoneditor-object schema="[[item.schema]]" json="{{item.json}}"></jsoneditor-object></template>
+          <input disabled=[[isFixed(item.name,schema)]] class$=[[cssClass(item.name,json,schema)]] value=[[item.name]] on-input="updateKey">
+          <template is="dom-if" if="[[equals(item.schema.type,'string')]]"><jsoneditor-string schema="[[item.schema]]" json="[[item.json]]" set-value=[[_setValue(item.name)]]></jsoneditor-string></template>
+          <template is="dom-if" if="[[equals(item.schema.type,'object')]]"><jsoneditor-object schema="[[item.schema]]" json="[[item.json]]" set-value=[[_setValue(item.name)]]></jsoneditor-object></template>
+          <template is="dom-if" if="[[equals(item.schema.type,'array')]]"><jsoneditor-array schema="[[item.schema]]" json="[[item.json]]" set-value=[[_setValue(item.name)]]></jsoneditor-array></template>
+          <template is="dom-if" if="[[equals(item.schema.type,'enum')]]"><jsoneditor-enum schema="[[item.schema]]" json="[[item.json]]" set-value=[[_setValue(item.name)]]></jsoneditor-enum></template>
         </li>
       </template>
       <template is="dom-if" if="[[notNull(schema.addProp)]]">
@@ -35,22 +37,21 @@
   <script>
     Polymer({
       observers: [
-        'pressInSchema(json,schema)'
+        'pressInSchema(json,schema,setValue)'
       ],
       is: 'jsoneditor-object',
-      remove: function(e) {
-        console.log(e.model.index)
-      },
       equals: (o1,o2) => o1 == o2,
       notNull: (o) => o != null,
       elements: (schema,json) =>
-        console.log(json) || Object.keys(Object.assign({}, schema.props, json))
+        Object.keys(Object.assign({}, schema.props, json))
           .sort()
-          .map(k => ({name:k, json:json[k], schema:schema.props[k]||schema.addProp})),
-      _getInputForKey: function(k) {
-        ul = Polymer.dom(this.$.list.root.parentElement)
-        i = this.$.list.items.findIndex((i) => i.name == k)
-        return ul.children[i].children[0]
+          .map(k => {
+            _schema = (schema.props||{})[k] || schema.addProp
+            return {name:k, schema:_schema,
+              json:json[k] || {'string':'','array':[],'enum':'',object:{}}[_schema.type]}
+          }),
+      _setValue: function(key) {
+        return (function(key,value){this.set(`json.${key}`, value);this.setValue(this.json)}).bind(this,key)
       },
       updateKey: function(e) {
         prevKey = this.$.list.itemForElement(e.target).name
@@ -65,6 +66,7 @@
           return this.set('json', Object.assign({},this.json)) // enforce update
         this.json[nextKey] = o
         this.set('json', Object.assign({},this.json)) // enforce update
+        this.setValue(this.json)
         setTimeout(() => {
           ul = Polymer.dom(this.$.list.root.parentElement)
           i = this.$.list.items.findIndex((i) => i.name == nextKey)
@@ -75,12 +77,13 @@
         newKey = e.target.value;
         e.target.value = ""
         while(this.json[newKey] != null) newKey += "_"
+        this.set(`json.${newKey}`, {'string':'', 'object':{}, 'array':[]}[this.schema.addProp.type])
+        this.setValue(this.json)
         setTimeout(() => {
           ul = Polymer.dom(this.$.list.root.parentElement)
           i = this.$.list.items.findIndex((i) => i.name == newKey)
           ul.children[i].children[0].focus()
         })
-        this.set(`json.${newKey}`, {'string':'', 'object':{}}[this.schema.addProp.type])
       },
       isFixed: (key,schema) => (schema.props || {})[key] != null,
       cssClass: (key,json,schema) =>
@@ -88,8 +91,8 @@
         ((schema.props || {})[key] != null && json[key] != null) ? 'set' :
         ((schema.props || {})[key] != null && ! json[key]) ? 'unset' :
         (!(schema.props || {})[key] != null && json[key] != null) ? 'added' : '',
-      pressInSchema: function(json,schema) {
-        if(!json || !schema) return
+      pressInSchema: function(json,schema,setValue) {
+        if(!json || !schema || !setValue) return
         _json = Object.assign({},json)
         change = false
         Object.keys(_json).concat(schema.required || []).forEach(k => {
@@ -97,13 +100,16 @@
             // delete doesn't trigger [[f(json.*)]] (bug?)
             delete _json[k]
             change = true
-          } else if(this.schema.props[k] != null
+          } else if((this.schema.props||{})[k] != null
               && (_json[k] == null || Object.getPrototypeOf(_json[k]) != {'string':String,'array':Array,'enum':String,object:Object}[this.schema.props[k].type].prototype)) {
             _json[k] = {'string':'','array':[],'enum':'',object:{}}[this.schema.props[k].type]
             change = true
           }
         })
-        if(change) setTimeout(() => this.set('json', _json)) // will call this function again
+        if(change) {
+          this.set('json', _json) // will call this function again
+          setValue(this.json)
+        }
       },
     });
   </script>

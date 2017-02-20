@@ -16,11 +16,8 @@ so far using callback
   <script>
     Polymer({
       is: 'jsoneditor-string',
-      properties: {
-        json: {notify: true}
-      },
       update: function(e) {
-        this.set('json', e.target.value)
+        this.setValue(e.target.value)
       }
     });
   </script>

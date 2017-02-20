@@ -1,18 +1,99 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="./jsoneditor/string.html">
+<link rel="import" href="./jsoneditor/enum.html">
+<link rel="import" href="./jsoneditor/array.html">
+<link rel="import" href="./jsoneditor/object.html">
+
 <dom-module id="app-configuration">
   <template>
-    <textarea readonly>{{_tostring(configuration)}}</textarea>
+    <jsoneditor-object schema=[[versions_schema]] json=[[_versions(configuration)]] set-value="[[_setValue('versions')]]"></jsoneditor-object>
+    <jsoneditor-array schema=[[autobuild_schema]] json=[[_autobuild(configuration)]] set-value="[[_setValue('autobuild')]]"></jsoneditor-array>
   </template>
 
   <script>
     Polymer({
       is: 'app-configuration',
+      noop: () => (() => {}),
+      _versions: (conf) => conf.versions || {},
+      _autobuild: (conf) => conf.autobuild || [],
+      _setValue: function(key) {
+        return (function(key,value){this.set(`configuration.${key}`, value)}).bind(this,key)
+      },
       properties: {
         configuration: {
-          type: Object,
-          value: () => {}
-        }
+          value: {}
+        },
+        versions_schema: {value: {
+          type: 'object',
+          addProp: {
+            type: 'object',
+            name: 'version',
+            props: {
+              env: {
+                type: 'object',
+                addProp: {
+                  type: 'string',
+                  name: 'param',
+                  placeholder: 'value' } },
+              build: {
+                type: 'object',
+                props: {
+                  base: {
+                    type: 'string',
+                    placeholder: 'alpine' },
+                  full: {
+                    type: 'string',
+                    placeholder: 'printf "hello world" > a.txt' },
+                  inc: {
+                    type: 'string',
+                    placeholder: 'printf "." >> a.txt' } } },
+              deploy: {
+                type: 'object',
+                props: {
+                  service: {
+                    type: 'object',
+                    props: {
+                      base: {
+                        type: 'string',
+                        placeholder: 'alpine' },
+                      command: {
+                        type: 'string',
+                        placeholder: 'httpd -f' } } } },
+                addProp: {
+                  type: 'array',
+                  name: 'platform',
+                  child: {
+                    type: 'string',
+                    placeholder: '^\./.*' } } } } }
+                    // error: v => {try{new RegExp(v)}catch{return 'not valid regex'}}
+        }},
+        autobuild_schema: {value:{
+          type: 'array',
+          child: {
+            type: 'object',
+            required: ['url','prefixes'],
+            props: {
+              trigger: {
+                type: 'enum',
+                values: ['commit', 'release'] },
+              url: {
+                type: 'string',
+                placeholder: 'https://github.com/rwth-acis/PLEASE-Frontend' },
+                // error: v,o => {if(!v.match(/^https:///){return 'must be valid https url'}else if(!v.match(/^https://github.com/){return 'only github is supported'}/}
+              change: {
+                type: 'enum',
+                values: ['none', 'commit', 'sync'] },
+                // error: v,o => {if(v == 'sync' && o.trigger == 'commit'){return 'sync is not compatible with commit trigger'}}
+              prefixes: {
+                type: 'array',
+                // warning: v => {if(v.length == 0){return 'if no prefix is selected, this hook wont have any effect'}}
+                child: {
+                  type: 'string',
+                  placeholder: 'v' } } } }
+                  // warning: v,o,app => {if(Object.keys(app.version).findIndex(ver => ver.startsWith(v)) == -1){return 'there is no version with such prefix'}}
+
+        }}
       },
       _tostring: function(o) {return JSON.stringify(o,null,2)}
     });

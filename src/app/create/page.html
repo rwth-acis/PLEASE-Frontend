@@ -1,5 +1,8 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../description.html">
+<link rel="import" href="../configuration.html">
+
 <dom-module id="app-create-page">
   <template>
     <style>
@@ -8,12 +11,10 @@
         height: 400px;
       }
     </style>
-    <h2>Description</h2>
-    <textarea value="{{description::input}}" placeholder="omitted"></textarea>
-    <h2>Versions</h2>
-    <textarea value="{{sVersions::input}}" placeholder="{}"></textarea>
-    <h2>Autobuild</h2>
-    <textarea value="{{sAutobuild::input}}" placeholder="[]"></textarea>
+    <textarea value="{{appData.description::input}}" placeholder="omitted"></textarea>
+    <h2>[[parsedDescription.title]]</h2>
+    <app-description description=[[parsedDescription]] parse-description={{parseDescription}}></app-description>
+    <app-configuration configuration=[[appData]]></app-configuration>
     <button disabled="[[_btn('disabled',btnState)]]" on-tap="postApp">[[_btn('text',btnState)]]</button>
   </template>
 
@@ -21,70 +22,73 @@
     Polymer({
       self: 5,
       is: 'app-create-page',
+      observers: ['_parseDescription(appData.description,parseDescription)'],
+      _parseDescription: function(description, parseDescription) {
+        if(!description || !parseDescription) return
+        ast = parseDescription(description)
+        return {
+          title: (c = ast.children.find(c => c.name == 'Title')) ? c.children[0] : 'No Title',
+          tabs: ast.children.find(c => c.name == 'Tabs').children.map(c => ({
+            header: (cc = c.children.find(c => c.name == 'Header')) ? cc.children[0] : '',
+            blocks: c.children.filter(c => c.name == 'Block').map(c => ({
+              content: c.children[0]
+            }))
+          }))
+        }
+      },
       properties: {
         appmetadataUrl: String,
-        btnState: {
-          type: String,
-          value: "prepared"
-        },
-        description: {
-          value: `
+        parsedDescription: { computed: '_parseDescription(appData.description,parseDescription)' },
+        appData: {
+          value: {
+            description: `
 # This is a very nice app!
 
 ## Usage
 
 Just use me, no limits
-          `
+
+yeah
+
+## Summary
+
+What do you want to know?
+`,
+            autobuild: [{
+              trigger: "commit",
+              url: "https://github.com/adabru/PLEASE-sample1",
+              change: "commit"
+            }],
+            versions: {
+              v0: {
+                env: {
+                  s: "https://github.com/adabru/PLEASE-sample1",
+                  s_name: "PLEASE-sample1"
+                },
+                build: {
+                  base: "alpine_openssl",
+                  full: "wget $s/archive/master.zip && unzip *.zip && mv mv \${s_name}* \${s_name}"
+                },
+                deploy: {
+                  service: {
+                    base: "build",
+                    command: "httpd -f -h \${s_name}"
+                  }
+                }
+              }
+            }
+          }
         },
-        sAutobuild: {
-          value: `
-[{
-  "trigger": "commit",
-  "url": "https://github.com/adabru/PLEASE-sample1",
-  "change": "commit"
-}]
-          `
+        btnState: {
+          type: String,
+          value: "prepared"
         },
-        sVersions: {
-          value: `
-{
-  "v0": {
-    "env": {
-      "s": "https://github.com/adabru/PLEASE-sample1",
-      "s_name": "PLEASE-sample1"
-    },
-    "build": {
-      "base": "alpine_openssl",
-      "full": "wget $s/archive/master.zip && unzip *.zip && mv mv \${s_name}* \${s_name}"
-    },
-    "deploy": {
-      "service": {
-        "base": "build",
-        "command": "httpd -f -h \${s_name}"
-      }
-    }
-  }
-}
-          `
-        }
       },
       postApp: function(event) {
-        try { versions = JSON.parse(this.sVersions) }
-        catch(e) { console.log(`error parsing versions: ${e.message}`); return }
-        try { autobuild = JSON.parse(this.sAutobuild) }
-        catch(e) { console.log(`error parsing autobuild: ${e.message}`); return }
         this.set('btnState', 'sending')
-        reqBody = `{
-          "description": ${JSON.stringify(this.description)},
-          "autobuild": ${this.sAutobuild},
-          "versions": ${this.sVersions}
-        }`
-        this.authFetch(`${this.appmetadataUrl}/apps`, {method: "POST", body: reqBody})
+        this.authFetch(`${this.appmetadataUrl}/apps`, {method: "POST", body: JSON.stringify(this.appData)})
         .then(response => response.json())
         .then(data => {
-          this.set('description', this.properties.description.value)
-          this.set('sVersions', this.properties.sVersions.value)
-          this.set('sAutobuild', this.properties.sAutobuild.value)
           this.set('btnState', 'prepared')
           window.location.hash=`#apps/${data.app}`
         }).catch((error) => {
