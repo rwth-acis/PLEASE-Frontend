@@ -1,0 +1,42 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="./string.html">
+<link rel="import" href="./object.html">
+
+<dom-module id="jsoneditor-array">
+  <template>
+    <ul>
+      <template id="list" is="dom-repeat" items="{{json}}">
+        <li>
+          <button on-tap="remove">–</button>
+          <template is="dom-if" if="[[equals(schema.child.type,'string')]]"><jsoneditor-string schema="[[schema.child]]" json="[[item]]" on-input="updateElement"></jsoneditor-string></template>
+          <template is="dom-if" if="[[equals(schema.child.type,'object')]]"><jsoneditor-object schema="[[schema.child]]" json="{{item}}"></jsoneditor-object></template>
+        </li>
+      </template>
+      <li>
+        <button on-tap="add">+</button>
+      </li>
+    </ul>
+  </template>
+
+  <script>
+    // will get simpler when issue will be resolved: https://github.com/Polymer/polymer/issues/1913
+    // in polymer 2.0 this will be resolved
+    Polymer({
+      is: 'jsoneditor-array',
+      // properties: {
+      //   json: {notify:true,observer:'print_json'}
+      // },
+      equals: (o1,o2) => o1 == o2,
+      updateElement: function(e) {
+        index = this.$.list.modelForElement(e.target).index
+        this.set(`json.${index}`, e.target.value)
+      },
+      add: function(e) {
+        this.push('json', {'string':'', 'object':{}}[this.schema.child.type])
+      },
+      remove: function(e) {
+        this.splice('json', e.model.index, 1)
+      }
+    });
+  </script>
+</dom-module>

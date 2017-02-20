@@ -1,0 +1,27 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<!--
+this element's json upwards data binding can not be used in an array
+see https://github.com/Polymer/polymer/issues/1913
+will be resolved in polymer 2.0
+
+so far using callback
+-->
+
+<dom-module id="jsoneditor-string">
+  <template>
+    <input placeholder="[[schema.placeholder]]" value="[[json]]" on-input="update">
+  </template>
+
+  <script>
+    Polymer({
+      is: 'jsoneditor-string',
+      properties: {
+        json: {notify: true}
+      },
+      update: function(e) {
+        this.set('json', e.target.value)
+      }
+    });
+  </script>
+</dom-module>

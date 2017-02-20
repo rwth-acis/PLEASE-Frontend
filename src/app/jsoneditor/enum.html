@@ -1,0 +1,16 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<dom-module id="jsoneditor-enum">
+  <template>
+    <select value="{{json}}">
+    <template is="dom-repeat" items="[[schema.values]]">
+      <option value="[[item]]">[[item]]</option>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'jsoneditor-enum'
+    });
+  </script>
+</dom-module>

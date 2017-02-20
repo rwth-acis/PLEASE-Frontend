@@ -1,0 +1,110 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="./string.html">
+<link rel="import" href="./enum.html">
+<link rel="import" href="./array.html">
+
+<dom-module id="jsoneditor-object">
+  <template>
+    <style>
+      input.required {
+        color: #008800;
+      }
+      input.set, input.added {
+        color: #00cc00;
+      }
+      input.duplicate {
+        color: #aa0000;
+      }
+    </style>
+    <ul>
+      <template id="list" is="dom-repeat" items="[[elements(schema,json,json.*)]]">
+        <li>
+          <input autofocus="[[equals(focused,item.name)]]" disabled=[[isFixed(item.name,schema)]] class$=[[cssClass(item.name,json,schema)]] value=[[item.name]] on-input="updateKey">
+          <template is="dom-if" if="[[equals(item.schema.type,'string')]]"><jsoneditor-string schema="[[item.schema]]" json="{{item.json}}"></jsoneditor-string></template>
+          <template is="dom-if" if="[[equals(item.schema.type,'object')]]"><jsoneditor-object schema="[[item.schema]]" json="{{item.json}}"></jsoneditor-object></template>
+        </li>
+      </template>
+      <template is="dom-if" if="[[notNull(schema.addProp)]]">
+        <li>
+          <input placeholder=[[schema.addProp.name]] on-input="addProp">
+        </li>
+      </template>
+    </ul>
+  </template>
+
+  <script>
+    Polymer({
+      observers: [
+        'pressInSchema(json,schema)'
+      ],
+      is: 'jsoneditor-object',
+      remove: function(e) {
+        console.log(e.model.index)
+      },
+      equals: (o1,o2) => o1 == o2,
+      notNull: (o) => o != null,
+      elements: (schema,json) =>
+        console.log(json) || Object.keys(Object.assign({}, schema.props, json))
+          .sort()
+          .map(k => ({name:k, json:json[k], schema:schema.props[k]||schema.addProp})),
+      _getInputForKey: function(k) {
+        ul = Polymer.dom(this.$.list.root.parentElement)
+        i = this.$.list.items.findIndex((i) => i.name == k)
+        return ul.children[i].children[0]
+      },
+      updateKey: function(e) {
+        prevKey = this.$.list.itemForElement(e.target).name
+        nextKey = e.target.value
+        if(this.json[nextKey] != null) {
+          e.target.classList.add('duplicate')
+          return
+        }
+        o = this.json[prevKey]
+        delete this.json[prevKey]
+        if(nextKey == '')
+          return this.set('json', Object.assign({},this.json)) // enforce update
+        this.json[nextKey] = o
+        this.set('json', Object.assign({},this.json)) // enforce update
+        setTimeout(() => {
+          ul = Polymer.dom(this.$.list.root.parentElement)
+          i = this.$.list.items.findIndex((i) => i.name == nextKey)
+          ul.children[i].children[0].focus()
+        })
+      },
+      addProp: function(e) {
+        newKey = e.target.value;
+        e.target.value = ""
+        while(this.json[newKey] != null) newKey += "_"
+        setTimeout(() => {
+          ul = Polymer.dom(this.$.list.root.parentElement)
+          i = this.$.list.items.findIndex((i) => i.name == newKey)
+          ul.children[i].children[0].focus()
+        })
+        this.set(`json.${newKey}`, {'string':'', 'object':{}}[this.schema.addProp.type])
+      },
+      isFixed: (key,schema) => (schema.props || {})[key] != null,
+      cssClass: (key,json,schema) =>
+        ((schema.required || []).includes(key)) ? 'required' :
+        ((schema.props || {})[key] != null && json[key] != null) ? 'set' :
+        ((schema.props || {})[key] != null && ! json[key]) ? 'unset' :
+        (!(schema.props || {})[key] != null && json[key] != null) ? 'added' : '',
+      pressInSchema: function(json,schema) {
+        if(!json || !schema) return
+        _json = Object.assign({},json)
+        change = false
+        Object.keys(_json).concat(schema.required || []).forEach(k => {
+          if(!this.schema.addProp && !this.schema.props[k]) {
+            // delete doesn't trigger [[f(json.*)]] (bug?)
+            delete _json[k]
+            change = true
+          } else if(this.schema.props[k] != null
+              && (_json[k] == null || Object.getPrototypeOf(_json[k]) != {'string':String,'array':Array,'enum':String,object:Object}[this.schema.props[k].type].prototype)) {
+            _json[k] = {'string':'','array':[],'enum':'',object:{}}[this.schema.props[k].type]
+            change = true
+          }
+        })
+        if(change) setTimeout(() => this.set('json', _json)) // will call this function again
+      },
+    });
+  </script>
+</dom-module>
