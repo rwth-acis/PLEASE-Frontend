@@ -1,26 +1,35 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+
 <link rel="import" href="./header.html">
 <link rel="import" href="./description.html">
 <link rel="import" href="./configuration.html">
 <link rel="import" href="./comments.html">
+<link rel="import" href="./builds.html">
 
 <dom-module id="app-page">
   <template>
     <app-header header=[[_header(appData,parsedDescription)]]></app-header>
     <app-description description=[[parsedDescription]] parse-description={{parseDescription}}></app-description>
-    <h2>Configuration</h2>
-    <app-configuration configuration=[[appData]]></app-configuration>
-    <h2>Comments</h2>
-    <app-comments appmetadata-url=[[appmetadataUrl]] app=[[app]] auth-fetch=[[authFetch]]></app-comments>
+
+    <paper-tabs selected="{{selectedTab}}">
+      <paper-tab>Comments</paper-tab>
+      <paper-tab>Configuration</paper-tab>
+      <paper-tab>Builds</paper-tab>
+    </paper-tabs>
+    <iron-pages selected="[[selectedTab]]">
+      <app-comments appmetadata-url=[[appmetadataUrl]] app=[[app]] auth-fetch=[[authFetch]]></app-comments>
+      <app-configuration configuration=[[appData]]></app-configuration>
+      <app-builds app=[[app]] versions=[[appData.versions]] servicerunner-url=[[servicerunnerUrl]] auth-fetch=[[authFetch]]></app-builds>
+    </iron-pages>
   </template>
 
   <script>
     Polymer({
       is: 'app-page',
-      print_myjson: function () {
-        console.log(this.myjson)
-      },
       properties: {
+        selectedTab: {value: 2},
         app: {
           type: Number,
           value: -1,

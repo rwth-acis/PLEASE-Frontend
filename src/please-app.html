@@ -15,7 +15,7 @@
     </nav>
     <iron-pages selected=[[selected]]>
       <search-page appmetadata-url=[[appmetadataUrl]]></search-page>
-      <app-page app=[[selectedApp]] appmetadata-url=[[appmetadataUrl]] auth-fetch=[[authFetch]]></app-page>
+      <app-page app=[[selectedApp]] appmetadata-url=[[appmetadataUrl]] servicerunner-url=[[servicerunnerUrl]] auth-fetch=[[authFetch]]></app-page>
       <app-create-page appmetadata-url=[[appmetadataUrl]] auth-fetch=[[authFetch]]></app-create-page>
     </iron-pages>
   </template>
@@ -39,7 +39,7 @@
             this.set('selected', 2)
             break
           case /^#apps\/[0-9]+$/.test(hash):
-            this.set('selectedApp', hash.match(/([0-9]+)/)[1])
+            this.set('selectedApp', parseInt(hash.match(/([0-9]+)/)[1]))
             this.set('selected', 1)
             break
         }

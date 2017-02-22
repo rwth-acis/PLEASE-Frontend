@@ -1,0 +1,69 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="app-builds">
+  <template>
+    <ul>
+      <template is="dom-repeat" items="[[_taglist(versions)]]">
+        <li on-tap="postBuild">
+          [[item]]
+        </li>
+      </template>
+    </li>
+    <ul>
+      <template is="dom-repeat" items="[[_buildlist(builds)]]">
+        <li>
+          <strong>[[item.tag]]</strong>
+          <span>[[_formatdate(item.buildid)]]</span>
+          <span>[[item.status]]</span>
+        </li>
+      </template>
+    </ul>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'app-builds',
+      properties: {
+        app: { observer: 'loadBuilds' },
+        builds: {
+          value: {}
+        },
+      },
+      _taglist: (versions) =>
+        Object.keys(versions),
+      _buildlist: (builds) =>
+        [].concat(...Object.keys(builds).map((k) => Object.keys(builds[k]).map((id) => ({
+          tag: k,
+          buildid: parseInt(id),
+          status: ((b = builds[k][id]).exitcode != null) ? `exited with ${b.exitcode} after ${b.runtime/1000}s` : `running since ${b.runtime/1000}s`
+        })))).sort((a,b) => b.buildid-a.buildid),
+      _formatdate: (timestamp) => {
+        d = new Date(timestamp)
+        return `${d.getFullYear()}-${d.getMonth()}-${d.getDay()}  ${d.getHours()}:${d.getMinutes()}`
+      },
+      postBuild: function(e) {
+        tag = e.model.item
+        v = this.versions[tag]
+        reqBody = JSON.stringify(Object.assign({
+            app: this.app,
+            version: tag,
+          },
+          (v.build.base) ? {base: v.build.base} : {},
+          (v.build.full) ? {full: v.build.full} : {},
+          (v.env) ? {env: v.env} : {}
+        ))
+        tag = e.model.item
+        this.authFetch(`${this.servicerunnerUrl}/build?app=${this.app}`, {method: "POST", body: reqBody})
+        .then(r => {if(r.status == 200) this.loadBuilds()})
+        .catch(e => console.error(e))
+      },
+      loadBuilds: function() {
+        if(this.app == -1) return
+        fetch(`${this.servicerunnerUrl}/build?app=${this.app}`)
+        .then(r => r.json())
+        .then(d => this.set('builds', d[this.app] || {}))
+        .catch(e => console.error(e))
+      }
+    });
+  </script>
+</dom-module>
