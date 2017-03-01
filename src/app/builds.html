@@ -9,6 +9,7 @@
         </li>
       </template>
     </li>
+    <button on-tap="loadBuilds">refresh</button>
     <ul>
       <template is="dom-repeat" items="[[_buildlist(builds)]]">
         <li>
@@ -53,7 +54,7 @@
           (v.env) ? {env: v.env} : {}
         ))
         tag = e.model.item
-        this.authFetch(`${this.servicerunnerUrl}/build?app=${this.app}`, {method: "POST", body: reqBody})
+        this.authFetch(`${this.servicerunnerUrl}/build`, {method: "POST", body: reqBody})
         .then(r => {if(r.status == 200) this.loadBuilds()})
         .catch(e => console.error(e))
       },

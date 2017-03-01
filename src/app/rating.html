@@ -1,0 +1,82 @@
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="app-rating">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+        position: relative;
+      }
+      span {
+        font-size: 2em;
+      }
+      span.back {
+        color: #ffffff;
+        text-shadow: 2px 2px 4px #aaaaaa;
+      }
+      span#fore {
+        color: #ccccff;
+        text-shadow: 2px 2px 4px #aaaaff;
+        overflow: hidden;
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+      span#user {
+        color: #6666ff;
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+    </style>
+    <span class="back">★★★★★</span>
+    <span id="fore" style$="width: calc(100% * [[rating]] / 5)">★★★★★</span>
+    <span id="user"></span>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'app-rating',
+      properties: {
+        app: { observer: 'loadRating' },
+        authFetch: { observer: 'loadRating' },
+        rating: { value: 3 },
+        userRating: { value: 0 }
+      },
+      listeners: {
+        'mousemove': 'mouse',
+        'mouseleave': 'leave',
+        'tap': 'tap'
+      },
+      mouse: function(e){
+        i = Math.min(5, Math.floor((e.clientX-this.offsetLeft) / this.clientWidth * 5) + 1)
+        this.$.user.innerHTML = "☆".repeat(i)
+      },
+      leave: function(e){
+        this.$.user.innerHTML = "☆".repeat(this.userRating)
+      },
+      tap: function(e){
+        i = Math.min(5, Math.floor((e.detail.x-this.offsetLeft) / this.clientWidth * 5) + 1)
+        this.set('userRating', i)
+        this.authFetch(`${this.appmetadataUrl}/apps/${this.app}/rating`, {method: "POST", body: ""+i})
+        .then(r => {if(r.status == 200) this.loadRating()})
+        .catch(e => console.error(e))
+      },
+      loadRating: function(){
+        if(this.app == -1) return
+        this.authFetch.call(this, `${this.appmetadataUrl}/apps/${this.app}/rating`,{})
+        .then(r => r.text())
+        .then(d => {
+          this.set('userRating', parseInt(d))
+          this.$.user.innerHTML = "☆".repeat(this.userRating)
+        })
+        .catch(e => console.error(e))
+        fetch(`${this.appmetadataUrl}/apps/${this.app}`)
+        .then(r => r.json())
+        .then(d => this.set('rating', d.rating))
+        .catch(e => console.error(e))
+      }
+    });
+  </script>
+</dom-module>

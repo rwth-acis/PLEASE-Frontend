@@ -1,0 +1,106 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="./jsoneditor/object.html">
+
+<dom-module id="app-deployments">
+  <template>
+    <div>
+      <select id="version" on-change="selectVersion">
+        <option value="">select...</option>
+        <template is="dom-repeat" items="[[_taglist(versions)]]">
+          <option value="[[item]]">[[item]]</option>
+        </template>
+      </select>
+      <jsoneditor-object schema=[[deploy_schema]] json=[[json]] set-value="[[_setValue()]]"></jsoneditor-object>
+    </div>
+    <button on-tap="postDeploy">deploy service</button>
+    <h2>active deployments</h2>
+    <ul>
+      <template is="dom-repeat" items="[[deployments]]">
+        <li>
+          <strong>[[item]]</strong>
+        </li>
+      </template>
+    </ul>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'app-deployments',
+      properties: {
+        app: { observer: 'loadDeployments' },
+        deployments: { value: [] },
+        builds: {
+          value: {}
+        },
+        json: { value: {} },
+        deploy_schema: { value: {
+          type: 'object',
+          props: {
+            base: {
+              type: 'string',
+              placeholder: 'alpine'
+            },
+            command: {
+              type: 'string',
+              placeholder: 'httpd -f'
+            },
+            env: {
+              type: 'object',
+              addProp: {
+                name: 'param',
+                type: 'string',
+                placeholder: 'var'
+              }
+            }
+          }
+        } }
+      },
+      selectVersion: function(e) {
+        if(e.target.value == "") return
+        v = this.versions[e.target.value]
+        this.set('json', Object.assign({},
+          (((v.deploy||{}).service||{}).base != null) ? {base: v.deploy.service.base} : {},
+          (((v.deploy||{}).service||{}).command != null) ? {command: v.deploy.service.command} : {},
+          (v.env != null) ? {env: v.env} : {}
+        ))
+      },
+      _setValue: function() {
+        return (function(val){this.set('json', val)}).bind(this)
+      },
+      _taglist: (versions) =>
+        Object.keys(versions),
+      _buildlist: (builds) =>
+        [].concat(...Object.keys(builds).map((k) => Object.keys(builds[k]).map((id) => ({
+          tag: k,
+          buildid: parseInt(id),
+          status: ((b = builds[k][id]).exitcode != null) ? `exited with ${b.exitcode} after ${b.runtime/1000}s` : `running since ${b.runtime/1000}s`
+        })))).sort((a,b) => b.buildid-a.buildid),
+      _formatdate: (timestamp) => {
+        d = new Date(timestamp)
+        return `${d.getFullYear()}-${d.getMonth()}-${d.getDay()}  ${d.getHours()}:${d.getMinutes()}`
+      },
+      postDeploy: function(e) {
+        reqBody = JSON.stringify(Object.assign({
+            app: this.app,
+            version: this.$.version.value
+          },
+          (this.json.base) ? {base: this.json.base} : {},
+          (this.json.command) ? {command: this.json.command} : {},
+          (this.json.env) ? {env: this.json.env} : {}
+        ))
+
+        this.authFetch(`${this.servicerunnerUrl}/deployed`, {method: "POST", body: reqBody})
+        .then(r => {if(r.status == 201) this.loadDeployments()})
+        .catch(e => console.error(e))
+      },
+      loadDeployments: function() {
+        if(this.app == -1) return
+        fetch(`${this.servicerunnerUrl}/deployed?app=${this.app}`)
+        .then(r => r.json())
+        .then(d => this.set('deployments', d[this.app] || []))
+        .catch(e => console.error(e))
+      }
+    });
+  </script>
+</dom-module>

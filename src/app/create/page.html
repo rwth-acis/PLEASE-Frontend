@@ -67,12 +67,12 @@ What do you want to know?
                 },
                 build: {
                   base: "alpine_openssl",
-                  full: "wget $s/archive/master.zip && unzip *.zip && mv mv \$s_name* \$s_name"
+                  full: "wget $s/archive/master.zip\nunzip *.zip\nmv \$s_name* \$s_name"
                 },
                 deploy: {
                   service: {
                     base: "build",
-                    command: "httpd -f -h \${s_name}"
+                    command: "httpd -f -h \$s_name"
                   }
                 }
               }

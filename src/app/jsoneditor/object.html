@@ -9,11 +9,15 @@
       input.required { color: #008800; }
       input.set, input.added { color: #00cc00; }
       input.duplicate { color: #aa0000; }
+      ul {
+        list-style: none;
+        padding-left: 20px;
+      }
     </style>
     <ul>
       <template id="list" is="dom-repeat" items="[[elements(schema,json,json.*)]]">
         <li>
-          <input disabled=[[isFixed(item.name,schema)]] class$=[[cssClass(item.name,json,schema)]] value=[[item.name]] on-input="updateKey">
+          <input size="10" disabled=[[isFixed(item.name,schema)]] class$=[[cssClass(item.name,json,schema)]] value=[[item.name]] on-input="updateKey">
           <template is="dom-if" if="[[equals(item.schema.type,'string')]]"><jsoneditor-string schema="[[item.schema]]" json="[[item.json]]" set-value=[[_setValue(item.name)]]></jsoneditor-string></template>
           <template is="dom-if" if="[[equals(item.schema.type,'object')]]"><jsoneditor-object schema="[[item.schema]]" json="[[item.json]]" set-value=[[_setValue(item.name)]]></jsoneditor-object></template>
           <template is="dom-if" if="[[equals(item.schema.type,'array')]]"><jsoneditor-array schema="[[item.schema]]" json="[[item.json]]" set-value=[[_setValue(item.name)]]></jsoneditor-array></template>

@@ -7,21 +7,24 @@
 <link rel="import" href="./configuration.html">
 <link rel="import" href="./comments.html">
 <link rel="import" href="./builds.html">
+<link rel="import" href="./deployments.html">
 
 <dom-module id="app-page">
   <template>
-    <app-header header=[[_header(appData,parsedDescription)]]></app-header>
+    <app-header header=[[_header(appData,parsedDescription)]] app=[[app]] auth-fetch=[[authFetch]] appmetadata-url=[[appmetadataUrl]]></app-header>
     <app-description description=[[parsedDescription]] parse-description={{parseDescription}}></app-description>
 
     <paper-tabs selected="{{selectedTab}}">
       <paper-tab>Comments</paper-tab>
       <paper-tab>Configuration</paper-tab>
       <paper-tab>Builds</paper-tab>
+      <paper-tab>Deployments</paper-tab>
     </paper-tabs>
     <iron-pages selected="[[selectedTab]]">
       <app-comments appmetadata-url=[[appmetadataUrl]] app=[[app]] auth-fetch=[[authFetch]]></app-comments>
       <app-configuration configuration=[[appData]]></app-configuration>
       <app-builds app=[[app]] versions=[[appData.versions]] servicerunner-url=[[servicerunnerUrl]] auth-fetch=[[authFetch]]></app-builds>
+      <app-deployments app=[[app]] versions=[[appData.versions]] servicerunner-url=[[servicerunnerUrl]] auth-fetch=[[authFetch]]></app-builds>
     </iron-pages>
   </template>
 
@@ -29,7 +32,7 @@
     Polymer({
       is: 'app-page',
       properties: {
-        selectedTab: {value: 2},
+        selectedTab: {value: 3},
         app: {
           type: Number,
           value: -1,

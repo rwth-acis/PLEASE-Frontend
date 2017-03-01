@@ -1,16 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-rating/paper-rating.html">
+
+<link rel="import" href="./rating.html">
 
 <dom-module id="app-header">
   <template>
-    <style>
-      :host {
-        --paper-rating-active-color: #ff0000;
-        --paper-rating-inactive-color: #000000;
-      }
-    </style>
     <h2>[[header.title]]</h2>
-    <paper-rating max="5" rating=3></paper-rating>
+    <app-rating app=[[app]] auth-fetch=[[authFetch]] appmetadata-url=[[appmetadataUrl]]></app-rating>
     <span>[[_platformstring(header.platforms)]]</span>
   </template>
 

@@ -14,18 +14,21 @@
     Polymer({
       is: 'las2peer-oidc',
       properties: {
-        authFetch: {value:function(){
-          return function(url, request) {
-            if(this.signedIn) {
-              request.headers = request.headers || {}
-              Object.assign(request.headers, {"access_token":this.accessToken, "oidc_provider":this.oidcProvider})
-            }
-            return fetch(url, request)
-          }.bind(this)
-        },notify:true}
+        authFetch: {value:function(){return fetch.bind(window)}, notify:true}
+      },
+      _authFetch: function(){
+        return function(url, request) {
+          if(this.signedIn) {
+            request = request || {}
+            request.headers = request.headers || {}
+            Object.assign(request.headers, {"access_token":this.accessToken, "oidc_provider":this.oidcProvider})
+          }
+          return fetch(url, request)
+        }.bind(this)
       },
       signin: function(e) {
         this.accessToken = e.detail.access_token
+        this.set('authFetch', this._authFetch()) // for notify
         fetch(`${this.oidcProvider}/.well-known/openid-configuration`)
         .then(r => r.json())
         .then(d =>
@@ -38,6 +41,7 @@
       },
       signout: function() {
         this.set("user",null)
+        this.set('authFetch', this._authFetch()) // for notify
       }
     });
   </script>
