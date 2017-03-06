@@ -57,7 +57,24 @@
                         placeholder: 'alpine' },
                       command: {
                         type: 'string',
-                        placeholder: 'httpd -f' } } } },
+                        placeholder: 'httpd -f' } } },
+                  role: {
+                    type: 'object',
+                    props: {
+                      base: {
+                        type: 'string',
+                        placeholder: 'alpine' },
+                      command: {
+                        type: 'string',
+                        placeholder: 'httpd -f' },
+                      title: {
+                        type: 'string',
+                        placeholder: 'My App' },
+                      widgets: {
+                        type: 'array',
+                        child: {
+                          type: 'string',
+                          placeholder: '$ip4_http/80/widget1.xml' } } } } },
                 addProp: {
                   type: 'array',
                   name: 'platform',
