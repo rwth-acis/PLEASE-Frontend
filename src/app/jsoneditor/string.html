@@ -18,7 +18,7 @@ so far using callback
         white-space: pre;
       }
     </style>
-    <textarea on-resize="test" id="ta" placeholder="[[schema.placeholder]]" value="[[json]]" on-input="update"></textarea>
+    <textarea id="ta" placeholder="[[schema.placeholder]]" value="[[json]]" on-input="update"></textarea>
   </template>
 
   <script>
@@ -33,9 +33,6 @@ so far using callback
         this.$.ta.style.width = 0
         this.$.ta.style.height = this.$.ta.scrollHeight
         this.$.ta.style.width = this.$.ta.scrollWidth + 8
-      },
-      test: function(e) {
-        console.log('test')
       },
       attached: function() {
         setTimeout(this.resize.bind(this))

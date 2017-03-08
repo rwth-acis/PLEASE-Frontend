@@ -1,0 +1,162 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../jsoneditor/object.html">
+<link rel="import" href="../jsoneditor/string.html">
+
+<dom-module id="app-deploy-space">
+  <template>
+    <style>
+      input.valid { border-color: green; }
+      input.checking { border-color: yellow; }
+      input.error { border-color: red; }
+      button.process { border-color: yellow; }
+      button.success { border-color: green; }
+      button.error { border-color: red; }
+    </style>
+    <h3>role space</h3>
+    <jsoneditor-object schema=[[space_schema]] json=[[json]] set-value="[[_setValue()]]"></jsoneditor-object>
+    <button id="btnrole" class$=[[deployState]] disabled=[[_btnDisabled(labelState,deployState)]] on-tap="postSpace">deploy role space</button>
+    <input class$=[[labelState]] disabled=[[_inputDisabled(deployState)]] placeholder="space label" on-input="update" class$=[[labelState]]></input>
+    <span class$=[[labelState]]>[[labelMessage]]</span>
+    <br>
+    <span inner-h-t-m-l=[[deployMessage]]></span>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'app-deploy-space',
+      properties: {
+        json: { value: {} },
+        labelState: { value: 'error' },
+        labelMessage: { value: 'label must not be empty' },
+        labelCounter: { value: 0 },
+        deployState: { value: 'idle' },
+        deployMessage: { value: 'no space deployed' },
+        space_schema: { value: {
+          type: 'object',
+          props: {
+            base: {
+              type: 'string',
+              placeholder: 'alpine'
+            },
+            command: {
+              type: 'string',
+              placeholder: 'httpd -f'
+            },
+            title: {
+              type: 'string',
+              placeholder: 'MyApp'
+            },
+            widgets: {
+              type: 'array',
+              child: {
+                type: 'string',
+                placeholder: 'http://$ip4_http/80/widget1.xml'
+              }
+            },
+            env: {
+              type: 'object',
+              addProp: {
+                name: 'param',
+                type: 'string',
+                placeholder: 'var'
+              }
+            }
+          }
+        } }
+      },
+      _setValue: function() {
+        return (function(val){this.set('json', val)}).bind(this)
+      },
+      _btnDisabled: (labelState,deployState) => labelState != 'valid' || deployState == 'process',
+      _inputDisabled: (deployState) => deployState == 'process',
+      update: function(e) {
+        v = e.target.value
+        this.set('labelCounter', this.labelCounter + 1)
+        lc = this.labelCounter
+        this.set('label', e.target.value)
+        this.set('labelState', 'checking')
+        if(!/^[a-z0-9_-]+$/.test(v)) {
+          this.set('labelState', 'error')
+          this.set('labelMessage', 'label must match regex /[a-z0-9_-]+/')
+          return
+        }
+
+        fetch(`${this.roleUrl}/spaces/${v}/:;predicate=http%3A%2F%2Fpurl.org%2Fopenapp%2Fmetadata`, {headers: {'Accept': 'application/json'}})
+        .then(r => {
+          if(r.status != 200) throw 'could not retrieve space information'
+          return r.json()
+        })
+        .then(function(d) {
+          if(JSON.stringify(d) != '{}') throw 'space already exists'
+          if(lc != this.labelCounter) return
+          this.set('labelState', 'valid')
+          this.set('labelMessage', 'valid space label')
+        }.bind(this))
+        .catch(function(e) {
+          if(lc != this.labelCounter) return
+          this.set('labelState', 'error')
+          this.set('labelMessage', e)
+        }.bind(this))
+      },
+      postSpace: function(e) {
+        reqBody = JSON.stringify({
+            app: this.app,
+            version: this.version,
+            base: this.json.base,
+            command: this.json.command
+        })
+        // deploy service
+        this.set('deployState', 'process')
+        this.authFetch(`${this.servicerunnerUrl}/deployed`, {method: 'POST', body: reqBody})
+        .then(r => {
+          if(r.status != 201) throw "service deployment failed"
+          return r.json()
+        })
+        .then(d => {
+          // role
+          ip4_http = `${this.servicerunnerUrl}/deployed/${d.iid}`
+          ip6 = d.ip6
+          // login
+          return this.authFetch(`${this.roleUrl}/o/oauth2/authorizeImplicit?userinfo_endpoint=https://api.learning-layers.eu/o/oauth2/userinfo`, {credentials: 'include'})
+          .then(r => {
+            if(r.status != 200) throw "space creation failed (login failed)"
+            // create space
+            headers = {"Content-Type": "application/x-www-form-urlencoded"}
+            body = [
+              `openapp.ns.rdf=http://www.w3.org/1999/02/22-rdf-syntax-ns#`,
+              `openapp.ns.rdfs=http://www.w3.org/2000/01/rdf-schema#`,
+              `openapp.ns.dcterms=http://purl.org/dc/terms/`,
+              `openapp.rdf.predicate=http://purl.org/role/terms/space`,
+              `openapp.rdf.type=http://purl.org/role/terms/Space`,
+              `openapp.rdfs.label=${this.label}`,
+            ].join('&')
+            return fetch(`${this.roleUrl}/spaces`, {credentials: 'include', method: 'POST', body, headers})
+          }).then(r => {
+            if(r.status != 200) throw "space creation failed"
+            // add widgets
+            if((this.json.widgets||[]).length == 0) return
+            return Promise.all(this.json.widgets.map(w => {
+              w = w.replace(/^http:\/\/$ip4_http/, `http://${ip4_http}`).replace(/^http:\/\/\[$ip6/, `http://[${ip6}`)
+              uri = `${this.roleUrl}/spaces/${this.label}/:;`
+              uri += ('http://www.w3.org/1999/02/22-rdf-syntax-ns#type=http://purl.org/role/terms/OpenSocialGadget;'
+                  + `http://www.w3.org/2000/01/rdf-schema#seeAlso=${w};`
+                  + 'predicate=http://purl.org/role/terms/tool'
+                ).replace(/:/g, '%3A').replace(/\//g, '%2F').replace(/#/g, '%23')
+              return fetch(uri, {method: 'POST', body: '', credentials: 'include'})
+              .then(r => {if(r.status != 201) throw `widget addition failed for ${w}`})
+            }))
+          })
+        })
+        .then(function() {
+          this.set('deployState', 'success')
+          this.set('deployMessage', `created space <a href="${this.roleUrl}/spaces/${this.label}">${this.label}</a>`)
+        }.bind(this))
+        .catch(function(e) {
+          this.set('deployState', 'error')
+          this.set('deployMessage', e)
+        }.bind(this))
+      }
+    });
+  </script>
+</dom-module>

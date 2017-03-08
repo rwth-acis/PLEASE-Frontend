@@ -1,0 +1,56 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../jsoneditor/object.html">
+
+<dom-module id="app-deploy-service">
+  <template>
+    <h3>service</h3>
+    <jsoneditor-object schema=[[service_schema]] json=[[json]] set-value="[[_setValue()]]"></jsoneditor-object>
+    <button on-tap="postService">deploy service</button>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'app-deploy-service',
+      properties: {
+        json: { value: {} },
+        service_schema: { value: {
+          type: 'object',
+          props: {
+            base: {
+              type: 'string',
+              placeholder: 'alpine'
+            },
+            command: {
+              type: 'string',
+              placeholder: 'httpd -f'
+            },
+            env: {
+              type: 'object',
+              addProp: {
+                name: 'param',
+                type: 'string',
+                placeholder: 'var'
+              }
+            }
+          }
+        } },
+      },
+      _setValue: function() {
+        return (function(val){this.set('json', val)}).bind(this)
+      },
+      postService: function(e) {
+        reqBody = JSON.stringify(Object.assign({
+            app: this.app,
+            version: this.version
+          }, this.json))
+
+        this.authFetch(`${this.servicerunnerUrl}/deployed`, {method: "POST", body: reqBody})
+        .then(r => {
+          if(r.status != 201) throw "service deployment failed"
+        })
+        .catch(e => console.error(e))
+      }
+    });
+  </script>
+</dom-module>

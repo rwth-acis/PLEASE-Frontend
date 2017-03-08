@@ -32,6 +32,9 @@
       },
       route: function(hash) {
         switch(true) {
+          case /^$/.test(hash):
+            this.route('#apps')
+            break
           case /^#apps\/?$/.test(hash):
             this.set('selected', 0)
             break
