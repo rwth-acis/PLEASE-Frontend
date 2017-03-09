@@ -137,7 +137,7 @@
             // add widgets
             if((this.json.widgets||[]).length == 0) return
             return Promise.all(this.json.widgets.map(w => {
-              w = w.replace(/^http:\/\/$ip4_http/, `http://${ip4_http}`).replace(/^http:\/\/\[$ip6/, `http://[${ip6}`)
+              w = w.replace(/\$ip4_http/, ip4_http).replace(/\$ip6/, ip6)
               uri = `${this.roleUrl}/spaces/${this.label}/:;`
               uri += ('http://www.w3.org/1999/02/22-rdf-syntax-ns#type=http://purl.org/role/terms/OpenSocialGadget;'
                   + `http://www.w3.org/2000/01/rdf-schema#seeAlso=${w};`
