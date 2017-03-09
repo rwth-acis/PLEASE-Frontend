@@ -8,15 +8,19 @@
 <dom-module id="app-deployments">
   <template>
     <select id="version" on-change="selectVersion">
-      <option value="">select...</option>
+      <option value="">please select version...</option>
       <template is="dom-repeat" items="[[_taglist(versions)]]">
         <option value="[[item]]">[[item]]</option>
       </template>
     </select>
-    <app-deploy-service app=[[app]] version=[[version]] json=[[_json('service',version,versions)]] auth-fetch=[[authFetch]]
-      servicerunner-url=[[servicerunnerUrl]]></app-deploy-service>
-    <app-deploy-space app=[[app]] version=[[version]] json=[[_json('space',version,versions)]] auth-fetch=[[authFetch]]
-      servicerunner-url=[[servicerunnerUrl]] role-url=[[roleUrl]]></app-deploy-space>
+    <template is="dom-if" if="[[_enabled('service',version)]]">
+      <app-deploy-service app=[[app]] version=[[version]] json=[[_json('service',version,versions)]] auth-fetch=[[authFetch]]
+        servicerunner-url=[[servicerunnerUrl]]></app-deploy-service>
+    </template>
+    <template is="dom-if" if="[[_enabled('space',version)]]">
+      <app-deploy-space app=[[app]] version=[[version]] json=[[_json('space',version,versions)]] auth-fetch=[[authFetch]]
+        servicerunner-url=[[servicerunnerUrl]] role-url=[[roleUrl]]></app-deploy-space>
+    </template>
     <h2>active deployments</h2>
     <ul>
       <template is="dom-repeat" items="[[deployments]]">
@@ -36,9 +40,13 @@
         builds: { value: {} },
       },
       selectVersion: function(e) {
-        if(e.target.value == "") return
-        v = this.versions[e.target.value]
         this.set('version', e.target.value)
+      },
+      _enabled: function(key, version) {
+        return version != null && version != ""
+          && this.versions[version] != null
+          && this.versions[version].deploy != null
+          && this.versions[version].deploy[key] != null
       },
       _json: function(key, version, versions) {
         switch(key) {
@@ -51,7 +59,7 @@
           case 'space':
             v = this.versions[this.version] || {}
             return Object.assign({},
-              (v.deploy != null && v.deploy.role != null) ? v.deploy.role : {},
+              (v.deploy != null && v.deploy.space != null) ? v.deploy.space : {},
               (v.env != null) ? {env: v.env} : {}
             )
         }

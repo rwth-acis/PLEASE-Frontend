@@ -32,7 +32,7 @@
                 type: 'object',
                 addProp: {
                   type: 'string',
-                  name: 'param',
+                  name: 'variable',
                   placeholder: 'value' } },
               build: {
                 type: 'object',
@@ -58,7 +58,7 @@
                       command: {
                         type: 'string',
                         placeholder: 'httpd -f' } } },
-                  role: {
+                  space: {
                     type: 'object',
                     props: {
                       base: {
@@ -74,7 +74,7 @@
                         type: 'array',
                         child: {
                           type: 'string',
-                          placeholder: 'http://$ip4_http/80/widget1.xml' } } } } },
+                          placeholder: '$ip4_http/80/widget1.xml' } } } } },
                 addProp: {
                   type: 'array',
                   name: 'platform',

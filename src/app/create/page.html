@@ -42,41 +42,18 @@
         appData: {
           value: {
             description: `
-# This is a very nice app!
+# This is your app title
 
-## Usage
+## Sample tab
 
-Just use me, no limits
+First paragraph
 
-yeah
+Second paragraph
 
-## Summary
-
-What do you want to know?
+## Sample tab
 `,
-            autobuild: [{
-              trigger: "commit",
-              url: "https://github.com/adabru/PLEASE-sample1",
-              change: "commit"
-            }],
-            versions: {
-              v0: {
-                env: {
-                  s: "https://github.com/adabru/PLEASE-sample1",
-                  s_name: "PLEASE-sample1"
-                },
-                build: {
-                  base: "alpine_openssl",
-                  full: "wget $s/archive/master.zip\nunzip *.zip\nmv \$s_name* \$s_name"
-                },
-                deploy: {
-                  service: {
-                    base: "build",
-                    command: "httpd -f -h \$s_name"
-                  }
-                }
-              }
-            }
+            autobuild: [],
+            versions: {}
           }
         },
         btnState: {
