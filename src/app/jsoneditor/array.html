@@ -4,6 +4,15 @@
 
 <dom-module id="jsoneditor-array">
   <template>
+    <style>
+      ul {
+        list-style: none;
+        padding-left: 10px;
+      };
+      li {
+        display: flex;
+      }
+    </style>
     <ul>
       <template id="list" is="dom-repeat" items="[[_x(json,json.*)]]">
         <li>

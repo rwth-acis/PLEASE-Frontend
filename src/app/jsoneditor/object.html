@@ -11,13 +11,16 @@
       input.duplicate { color: #aa0000; }
       ul {
         list-style: none;
-        padding-left: 20px;
+        padding-left: 10px;
+      }
+      li {
+        display: flex;
       }
     </style>
     <ul>
       <template id="list" is="dom-repeat" items="[[elements(schema,json,json.*)]]">
         <li>
-          <input size="10" disabled=[[isFixed(item.name,schema)]] class$=[[cssClass(item.name,json,schema)]] value=[[item.name]] on-input="updateKey">
+          <input disabled=[[isFixed(item.name,schema)]] class$=[[cssClass(item.name,json,schema)]] value=[[item.name]] on-input="updateKey">
           <template is="dom-if" if="[[equals(item.schema.type,'string')]]"><jsoneditor-string schema="[[item.schema]]" json="[[item.json]]" set-value=[[_setValue(item.name)]]></jsoneditor-string></template>
           <template is="dom-if" if="[[equals(item.schema.type,'object')]]"><jsoneditor-object schema="[[item.schema]]" json="[[item.json]]" set-value=[[_setValue(item.name)]]></jsoneditor-object></template>
           <template is="dom-if" if="[[equals(item.schema.type,'array')]]"><jsoneditor-array schema="[[item.schema]]" json="[[item.json]]" set-value=[[_setValue(item.name)]]></jsoneditor-array></template>
@@ -35,7 +38,8 @@
   <script>
     Polymer({
       observers: [
-        'pressInSchema(json,schema,setValue)'
+        'pressInSchema(json,schema,setValue)',
+        'resize(json)'
       ],
       is: 'jsoneditor-object',
       equals: (o1,o2) => o1 == o2,
@@ -51,6 +55,22 @@
       _setValue: function(key) {
         return (function(key,value){this.set(`json.${key}`, value);this.setValue(this.json)}).bind(this,key)
       },
+      attached: function() {
+        setTimeout(this.resize.bind(this))
+      },
+      resize: function() {
+        for(li of this.$.list.parentElement.children) {
+          if(li.tagName != 'LI') break
+          inp = li.children[0]
+          // get size at beginning, workaround issue when not visible
+          dummy = document.createElement("span")
+          inp.parentElement.replaceChild(dummy, inp)
+          document.body.append(inp)
+          inp.style.width = 0
+          inp.style.width = inp.scrollWidth + 8
+          dummy.parentElement.replaceChild(inp, dummy)
+        }
+      },
       updateKey: function(e) {
         prevKey = this.$.list.itemForElement(e.target).name
         nextKey = e.target.value
@@ -60,15 +80,20 @@
         }
         o = this.json[prevKey]
         delete this.json[prevKey]
-        if(nextKey == '')
-          return this.set('json', Object.assign({},this.json)) // enforce update
+        if(nextKey == '') {
+          this.set('json', Object.assign({},this.json)) // enforce update
+          return setTimeout(() => {this.resize()})
+        }
         this.json[nextKey] = o
         this.set('json', Object.assign({},this.json)) // enforce update
         this.setValue(this.json)
         setTimeout(() => {
           ul = Polymer.dom(this.$.list.root.parentElement)
           i = this.$.list.items.findIndex((i) => i.name == nextKey)
-          ul.children[i].children[0].focus()
+          inp = ul.children[i].children[0]
+          inp.focus()
+          inp.style.width = 0
+          inp.style.width = inp.scrollWidth + 8
         })
       },
       addProp: function(e) {
