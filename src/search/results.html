@@ -6,12 +6,25 @@
       a {
         display: block
       }
+      ul {
+        list-style-type: none;
+      }
+      li {
+        padding: 5px;
+      }
+      strong {
+        padding: 5px;
+      }
     </style>
-    <template is="dom-repeat" items="[[results]]">
-      <a href="#apps/[[item.app]]">
-        <strong>[[item.rating]]</strong><span>[[item.description]]</span>
-      </a>
-    </template>
+    <ul>
+      <template is="dom-repeat" items="[[results]]">
+        <li>
+          <a href="#apps/[[item.app]]">
+            <strong>[[item.rating]]</strong><span>[[item.description]]</span>
+          </a>
+        </li>
+      </template>
+    </ul>
   </template>
 
   <script>
