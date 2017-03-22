@@ -1,20 +1,17 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
-<link rel="import" href="./las2peer-oidc.html">
+<link rel="import" href="./header.html">
 <link rel="import" href="./app/page.html">
 <link rel="import" href="./app/create/page.html">
 <link rel="import" href="./search/page.html">
 
 <dom-module id="please-app">
+  <link rel="stylesheet" href="please-app.css">
   <template>
-    <las2peer-oidc id="las2peer_oidc" oidc-client-id="[[oidcClientId]]" oidc-provider="[[oidcProvider]]" auth-fetch="{{authFetch}}"></las2peer-oidc>
-    <nav>
-      <a href="#apps">search</a>
-      <a href="#apps/new">new app</a>
-    </nav>
+    <please-header oidc-client-id=[[oidcClientId]] oidc-provider=[[oidcProvider]] auth-fetch={{authFetch}} appmetadata-url=[[appmetadataUrl]] query-url={{queryUrl}}></please-header>
     <iron-pages selected=[[selected]]>
-      <search-page appmetadata-url=[[appmetadataUrl]]></search-page>
+      <search-page appmetadata-url=[[appmetadataUrl]] query-url=[[queryUrl]]></search-page>
       <app-page app=[[selectedApp]] appmetadata-url=[[appmetadataUrl]] servicerunner-url=[[servicerunnerUrl]] role-url=[[roleUrl]] auth-fetch=[[authFetch]]></app-page>
       <app-create-page appmetadata-url=[[appmetadataUrl]] auth-fetch=[[authFetch]]></app-create-page>
     </iron-pages>

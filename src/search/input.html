@@ -2,23 +2,28 @@
 
 <dom-module id="search-input">
   <template>
-    <select id="platform" on-change="updateQueryUrl">
-      <option value="All">All</option>
-      <template is="dom-repeat" items="[[platforms]]">
-        <option value="[[item]]">[[item]]</option>
-      </template>
-    </select>
-    <input id="searchterms" on-input="updateQueryUrl" placeholder="search term1 term2" autofocus="true">
+    <div id="platform-selector" class$="[[collapsed]]">
+      <a on-tap="togglePlatformDropdown">
+        <span id="selected-platform">[[_platformName(selectedPlatform)]]</span><span>▼</span>
+      </a>
+      <ul>
+        <template is="dom-repeat" items="[[platforms]]">
+          <li class$=[[_selected(selectedPlatform,index)]]><a on-tap="changePlatform">[[item]]</a></li>
+        </template>
+      </ul>
+    </div>
+
+    <input id="searchterms" on-input="updateQueryUrl" on-keyup="submitOnEnter" placeholder="Search" autofocus="true" class="form-control">
+    <button on-tap="submitSearch">👓</button>
   </template>
 
   <script>
     Polymer({
       is: 'search-input',
       properties: {
-        platforms: {
-          type: Array,
-          value: () => []
-        },
+        platforms: { value: [] },
+        selectedPlatform: { value: 0 },
+        collapsed: { value: "collapsed" },
         changeCallback: Number,
         queryUrl: {
           notify: true
@@ -33,14 +38,30 @@
       attached: function() {
         this.updateQueryUrl()
       },
+      _platformName: function(i) {
+        if(!this.platforms) return ''
+        return this.platforms[i]
+      },
+      _selected: (i,j) => (i == j) ? 'selected' : '',
       updateQueryUrl: function() {
         if(this.$.searchterms.value == "")
-          this.set('queryUrl', `${this.appmetadataUrl}/platform/${this.$.platform.value}`)
+          this.set('queryUrl', `${this.appmetadataUrl}/platform/${this.selectedPlatform}`)
         else
           this.set('queryUrl', `${this.appmetadataUrl}/search?q=${this.$.searchterms.value}`)
       },
-      updatePlatform: function(e) {
-        console.log(e)
+      submitSearch: function() {
+        window.location.hash = 'apps'
+      },
+      submitOnEnter: function(e) {
+        if(e.key == 'Enter') this.submitSearch()
+      },
+      togglePlatformDropdown: function() {
+        this.set('collapsed', this.collapsed == "" ? "collapsed" : "")
+      },
+      changePlatform: function(e) {
+        this.set('selectedPlatform', e.model.index)
+        this.set('collapsed', 'collapsed')
+        this.updateQueryUrl()
       }
     });
   </script>

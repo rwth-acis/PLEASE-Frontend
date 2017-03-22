@@ -1,0 +1,31 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="./search/input.html">
+<link rel="import" href="./las2peer-oidc.html">
+
+<dom-module id="please-header">
+  <template>
+    <a href="#apps" id="brand">
+      <img src="../media/layersLogo.svg" width="36" height="24" /> <span>PLE App StorE</span>
+    </a>
+    <search-input appmetadata-url=[[appmetadataUrl]] query-url={{queryUrl}}></search-input>
+    <las2peer-oidc oidc-client-id=[[oidcClientId]] oidc-provider=[[oidcProvider]] auth-fetch={{authFetch}}></las2peer-oidc>
+    <button class="btn-new" on-tap="newApp">🔥 New</button>
+    <button on-tap="toggleCollapse" class="btn-collapse"> ≡ </button>
+  </template>
+  <script>
+    Polymer({
+      is: 'please-header',
+      properties: {
+        collapseClass: { value: "" },
+        queryUrl: { notify: true }
+      },
+      toggleCollapse: function() {
+        this.root.host.classList.toggle('expanded')
+      },
+      newApp: function() {
+        window.location.hash = 'apps/new'
+      }
+    });
+  </script>
+</dom-module>
