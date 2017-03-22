@@ -12,7 +12,7 @@
 <dom-module id="app-page">
   <template>
     <app-header header=[[_header(appData,parsedDescription)]] app=[[app]] auth-fetch=[[authFetch]] appmetadata-url=[[appmetadataUrl]]></app-header>
-    <app-description description=[[parsedDescription]] parse-description={{parseDescription}}></app-description>
+    <app-description description=[[parsedDescription]] parse-description={{parseDescription}} auth-fetch=[[authFetch]]></app-description>
 
     <paper-tabs selected="{{selectedTab}}">
       <paper-tab>Comments</paper-tab>
@@ -54,18 +54,9 @@
       },
       _parsedDescription: function(appData, parseDescription) {
         if (!appData || !parseDescription) {
-          return {title:'Load...',tabs:[]}
+          return {title:'Load...',tabs:[],props:{}}
         } else {
-          ast = parseDescription(appData.description)
-          return {
-            title: (c = ast.children.find(c => c.name == 'Title')) ? c.children[0] : 'No Title',
-            tabs: ast.children.find(c => c.name == 'Tabs').children.map(c => ({
-              header: (cc = c.children.find(c => c.name == 'Header')) ? cc.children[0] : '',
-              blocks: c.children.filter(c => c.name == 'Block').map(c => ({
-                content: c.children[0]
-              }))
-            }))
-          }
+          return parseDescription(appData.description)
         }
       },
       _header: function(appData, parsedDescription) {

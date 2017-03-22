@@ -3,6 +3,8 @@
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <script src="../../node_modules/adabru-parser/abp.js"></script>
 
+<link rel="import" href="./reqbaz.html">
+
 <dom-module id="app-description">
   <template>
     <paper-tabs selected="{{selectedTab}}">
@@ -19,6 +21,9 @@
         </div>
       </template>
     </iron-pages>
+    <template is="dom-if" if=[[description.props.reqbaz]]>
+      <app-reqbaz project-id=[[description.props.reqbaz]] auth-fetch=[[authFetch]]></app-reqbaz>
+    </template>
   </template>
 
   <script>
@@ -43,7 +48,25 @@
         .then(r => r.json())
         .then(d => {
           this.set('parseDescription', function(text) {
-              return abp.parseSync(text, d)
+              ast = abp.parseSync(text, d)
+              build = ast => {
+                switch(ast.name) {
+                  case 'App': return {
+                    title: (c = ast.children.find(c => c.name == 'Title')) ? c.children[0] : 'No Title',
+                    props: ast.children.find(c => c.name == 'Props').children.reduce((a,p) => Object.assign(a,build(p)), {}),
+                    tabs: ast.children.find(c => c.name == 'Tabs').children.map(build)
+                  }
+                  case 'Tab': return {
+                    header: (c = ast.children.find(c => c.name == 'Header')) ? c.children[0] : '',
+                    blocks: ast.children.filter(c => c.name == 'Block').map(build)
+                  }
+                  case 'Block': return {content: ast.children[0]}
+                  case 'PropReqbaz': return {'reqbaz': ast.children[0]}
+                  case 'PropUnknown': return {'unknown': ast.children[0]}
+                  default: return ''
+                }
+              }
+              return build(ast)
             }.bind(this)
           )
         }).catch(console.error)

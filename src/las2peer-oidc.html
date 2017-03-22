@@ -21,7 +21,7 @@
           if(this.signedIn) {
             request = request || {}
             request.headers = request.headers || {}
-            Object.assign(request.headers, {"access_token":this.accessToken, "oidc_provider":this.oidcProvider})
+            Object.assign(request.headers, {"access_token":this.accessToken, "oidc_provider":this.oidcProvider, "authorization": `bearer ${this.accessToken}`})
           }
           return fetch(url, request)
         }.bind(this)

@@ -1,0 +1,45 @@
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="app-reqbaz">
+  <template>
+    <a href=[[_url(host,projectId)]]>Go to RequirementsBazaar</a>
+    <template is="dom-repeat" items=[[requirements]]>
+      <div>
+        <span>[[item.title]]</span> <span class$="[[item.userVoted]] [[voteState]]" on-tap="vote">[[_calcStar(item.userVoted)]]</span> <span>[[item.upVotes]]</span>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'app-reqbaz',
+      properties: {
+        host: { value: "https://requirements-bazaar.org" },
+        category: { value: null },
+        requirements: { value: [] },
+        voteState: { value: 'idle' }
+      },
+      observers: ['reload(host, projectId, category, authFetch)'],
+      _url: (host, id) => `${host}/projects/${id}`,
+      _calcStar: (s) => (s == "UP_VOTE") ? '★' : '☆',
+      reload: function(host, projectId, category, authFetch) {
+        if(!host || !projectId || !authFetch) return
+        authFetch.call(this, `${host}/bazaar/projects/${projectId}`,{})
+        .then(r => r.json())
+        .then(d => authFetch.call(this, `${host}/bazaar/components/${d.defaultComponentId}/requirements`))
+        .then(r => r.json())
+        .then(d => {this.set('requirements', d); this.set('voteState', 'idle')})
+        .catch(console.error)
+      },
+      vote: function(e) {
+        if(this.voteState == 'waiting') return
+        item = e.model.item
+        this.set('voteState', 'waiting')
+        this.authFetch.call(this, `${this.host}/bazaar/requirements/${item.id}/votes`, {method: (item.userVoted == 'UP_VOTE') ? 'DELETE' : 'POST'})
+        .then(r => this.reload(this.host,this.projectId,this.category,this.authFetch))
+        .catch(e => console.error(e) && this.set('voteState', 'idle'))
+      }
+    });
+  </script>
+</dom-module>

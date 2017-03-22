@@ -13,7 +13,7 @@
     </style>
     <textarea value="{{appData.description::input}}" placeholder="omitted"></textarea>
     <h2>[[parsedDescription.title]]</h2>
-    <app-description description=[[parsedDescription]] parse-description={{parseDescription}}></app-description>
+    <app-description description=[[parsedDescription]] parse-description={{parseDescription}} auth-fetch=[[authFetch]]></app-description>
     <app-configuration configuration=[[appData]]></app-configuration>
     <button disabled="[[_btn('disabled',btnState)]]" on-tap="postApp">[[_btn('text',btnState)]]</button>
   </template>
@@ -25,16 +25,7 @@
       observers: ['_parseDescription(appData.description,parseDescription)'],
       _parseDescription: function(description, parseDescription) {
         if(!description || !parseDescription) return
-        ast = parseDescription(description)
-        return {
-          title: (c = ast.children.find(c => c.name == 'Title')) ? c.children[0] : 'No Title',
-          tabs: ast.children.find(c => c.name == 'Tabs').children.map(c => ({
-            header: (cc = c.children.find(c => c.name == 'Header')) ? cc.children[0] : '',
-            blocks: c.children.filter(c => c.name == 'Block').map(c => ({
-              content: c.children[0]
-            }))
-          }))
-        }
+        return parseDescription(description)
       },
       properties: {
         appmetadataUrl: String,
