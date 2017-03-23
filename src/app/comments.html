@@ -8,14 +8,16 @@
     }
   </style>
   <template>
-    <div>
+    <div class="add-comment">
       <textarea id="commenttext" placeholder="What do you think?"></textarea>
-      <button on-tap="postComment">+</button>
+      <button on-tap="postComment">Add Comment</button>
     </div>
     <template is="dom-repeat" items="[[comments]]">
-      <div>
-        <strong>[[item.creator]]</strong>
-        <span>[[_formatdate(item.timestamp)]]</span>
+      <div class="comment">
+        <div class="comment-head">
+          <strong>[[item.creator]]</strong>
+          <time>[[_formatdate(item.timestamp)]]</time>
+        </div>
         <p>
           [[item.text]]
         </p>
@@ -33,7 +35,15 @@
           value: () => []
         }
       },
-      _formatdate: (timestamp) => new Date(timestamp),
+      _formatdate: (timestamp) => {
+        d = new Date(timestamp)
+        D = d.getDate()
+        M = ['January','February','March','April','May','June','July','August','September','October','November','December'][d.getMonth()]
+        Y = d.getFullYear()
+        m = d.getMinutes()
+        h = d.getHours()
+        return `${h}:${m} ${D}-${M}-${Y}`
+      },
       postComment: function() {
         this.authFetch(`${this.appmetadataUrl}/apps/${this.app}/comments`, {method: "POST", body: this.$.commenttext.value})
         .then(r => {if(r.status == 200) this.loadComments()})

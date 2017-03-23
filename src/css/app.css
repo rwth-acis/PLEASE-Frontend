@@ -38,7 +38,7 @@ app-rating span#user {
 
 
 /* app body */
-app-page > div {
+app-page > .app-container > * {
   box-shadow: 1px 1px 10px #999;
   padding: 8px;
   border-radius: 8px;
@@ -48,6 +48,9 @@ app-page > div {
 
 
 /* tabs */
+app-tabs {
+  display: block;
+}
 app-page .tabs {
   display: flex;
   flex-wrap: wrap;
@@ -86,6 +89,9 @@ app-page .tabs > button.selected {
 
 
 /* reqbaz */
+app-reqbaz {
+  display: block;
+}
 app-reqbaz > div {
   display: flex;
   padding: 5px;
@@ -105,4 +111,53 @@ app-reqbaz .votes {
 app-reqbaz a {
   display: block;
   text-align: center;
+}
+
+
+
+/* comments */
+app-comments {
+  display: block;
+}
+app-comments .add-comment {
+  display: flex;
+}
+app-comments textarea {
+  flex-grow: 1;
+}
+app-comments button {
+  background-color: #ffa300;
+  border: 1px solid #ddd;
+  color: #fff;
+  text-shadow: 1px 1px 3px #333;
+  font-size: 16px;
+  padding: 8px;
+}
+app-comments button:hover {
+  background-color: #ffb400;
+  text-shadow: 1px 1px 3px #111;
+}
+app-comments .comment::before {
+  content: "";
+  display: block;
+  margin-bottom: 2px;
+  height: 1px;
+  position: relative;
+  left: 8px;
+  width: calc(100% - 16px);
+  background: #eee;
+}
+app-comments .comment p {
+  padding: 0 8px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+app-comments .comment-head {
+  display: flex;
+  font-size: .8em;
+}
+app-comments .comment-head > time {
+  flex-grow: 1;
+  text-align: right;
+  color: #999;
 }

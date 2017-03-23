@@ -17,23 +17,21 @@
 
     <app-header header=[[_header(appData,parsedDescription)]] app=[[app]] auth-fetch=[[authFetch]] appmetadata-url=[[appmetadataUrl]]></app-header>
 
-    <div>
+    <div class="app-container">
       <app-tabs tabs=[[parsedDescription.tabs]]></app-tabs>
-    </div>
-    <div>
+
       <template is="dom-if" if=[[parsedDescription.props.reqbaz]]>
         <app-reqbaz project-id=[[parsedDescription.props.reqbaz]] auth-fetch=[[authFetch]]></app-reqbaz>
       </template>
-    </div>
 
+      <app-comments appmetadata-url=[[appmetadataUrl]] app=[[app]] auth-fetch=[[authFetch]]></app-comments>
+    </div>
     <paper-tabs selected="{{selectedTab}}">
-      <paper-tab>Comments</paper-tab>
       <paper-tab>Configuration</paper-tab>
       <paper-tab>Builds</paper-tab>
       <paper-tab>Deployments</paper-tab>
     </paper-tabs>
     <iron-pages selected="[[selectedTab]]">
-      <app-comments appmetadata-url=[[appmetadataUrl]] app=[[app]] auth-fetch=[[authFetch]]></app-comments>
       <app-configuration configuration=[[appData]]></app-configuration>
       <app-builds app=[[app]] versions=[[appData.versions]] servicerunner-url=[[servicerunnerUrl]] auth-fetch=[[authFetch]]></app-builds>
       <app-deployments app=[[app]] versions=[[appData.versions]] servicerunner-url=[[servicerunnerUrl]] role-url=[[roleUrl]] auth-fetch=[[authFetch]]></app-builds>
