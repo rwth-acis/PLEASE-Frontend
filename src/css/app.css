@@ -1,0 +1,83 @@
+/* app header */
+h2 {
+  border-bottom: 1px solid #ddd;
+  font-weight: 500;
+  font-size: 30px;
+  text-align: center;
+}
+h2 > .creator {
+  margin-left: 10px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+app-rating {
+  display: inline-block;
+  float: left;
+  position: relative;
+  bottom: 8px;
+}
+app-rating span.back {
+  color: #ffffff;
+  text-shadow: 2px 2px 4px #aaaaaa;
+}
+app-rating span#fore {
+  color: #fda900;
+  text-shadow: 2px 2px 4px #aaaaff;
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+app-rating span#user {
+  color: #b80;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+
+
+/* app body */
+app-page > div {
+  box-shadow: 1px 1px 10px #999;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 33px 0;
+}
+
+
+
+/* tabs */
+app-page .tabs {
+  display: flex;
+  position: relative;
+  left: -8px;
+  bottom: -8px;
+  width: calc(100% + 16px);
+}
+app-page .tabs > button {
+  flex-grow: 1;
+  border-radius: 25px 25px 0 0;
+  font-size: 1.2em;
+  padding: 5px 20px;
+  color: #fff;
+  background-color: #428bca;
+  box-shadow: -1px -1px 5px #aaa;
+  border: none;
+}
+app-page .tabs > button:first-child {
+  border-radius: 0 25px 0 0;
+}
+app-page .tabs > button:nth-last-child(2) {
+  border-radius: 25px 0 0 0;
+}
+app-page .tabs > button:hover {
+  cursor: pointer;
+}
+app-page .tabs > button:hover,
+app-page .tabs > button.selected {
+  background-color: #3276b1;
+}
+app-page .tabs > button.selected {
+  cursor: default;
+}

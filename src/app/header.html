@@ -4,15 +4,19 @@
 
 <dom-module id="app-header">
   <template>
-    <h2>[[header.title]]</h2>
-    <app-rating app=[[app]] auth-fetch=[[authFetch]] appmetadata-url=[[appmetadataUrl]]></app-rating>
-    <span>[[_platformstring(header.platforms)]]</span>
+    <h2>
+      <app-rating app=[[app]] auth-fetch=[[authFetch]] appmetadata-url=[[appmetadataUrl]]></app-rating>
+      [[header.title]]
+      <span class="creator">[[_creator(header)]]</span>
+      <span>[[_platformstring(header.platforms)]]</span>
+    </h2>
   </template>
 
   <script>
     Polymer({
       is: 'app-header',
-      _platformstring: (platforms) => platforms.join(' / ')
+      _platformstring: (platforms) => platforms.join(' / '),
+      _creator: (header) => `by ${header.creator || '...'}`
     });
   </script>
 </dom-module>

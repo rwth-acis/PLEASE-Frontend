@@ -2,8 +2,10 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 
-<link rel="import" href="./header.html">
 <link rel="import" href="./description.html">
+<link rel="import" href="./header.html">
+<link rel="import" href="./tabs.html">
+<link rel="import" href="./reqbaz.html">
 <link rel="import" href="./configuration.html">
 <link rel="import" href="./comments.html">
 <link rel="import" href="./builds.html">
@@ -11,8 +13,18 @@
 
 <dom-module id="app-page">
   <template>
+    <app-description parse-description={{parseDescription}}></app-description>
+
     <app-header header=[[_header(appData,parsedDescription)]] app=[[app]] auth-fetch=[[authFetch]] appmetadata-url=[[appmetadataUrl]]></app-header>
-    <app-description description=[[parsedDescription]] parse-description={{parseDescription}} auth-fetch=[[authFetch]]></app-description>
+
+    <div>
+      <app-tabs tabs=[[parsedDescription.tabs]]></app-tabs>
+    </div>
+    <div>
+      <template is="dom-if" if=[[parsedDescription.props.reqbaz]]>
+        <app-reqbaz project-id=[[parsedDescription.props.reqbaz]] auth-fetch=[[authFetch]]></app-reqbaz>
+      </template>
+    </div>
 
     <paper-tabs selected="{{selectedTab}}">
       <paper-tab>Comments</paper-tab>
@@ -66,7 +78,8 @@
           return {
             title: parsedDescription.title,
             rating: appData.rating,
-            platforms: appData.platforms
+            platforms: appData.platforms,
+            creator: appData.creator
           }
       }
     });

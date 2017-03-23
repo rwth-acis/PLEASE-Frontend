@@ -3,33 +3,6 @@
 
 <dom-module id="app-rating">
   <template>
-    <style>
-      :host {
-        display: inline-block;
-        position: relative;
-      }
-      span {
-        font-size: 2em;
-      }
-      span.back {
-        color: #ffffff;
-        text-shadow: 2px 2px 4px #aaaaaa;
-      }
-      span#fore {
-        color: #ccccff;
-        text-shadow: 2px 2px 4px #aaaaff;
-        overflow: hidden;
-        position: absolute;
-        left: 0;
-        top: 0;
-      }
-      span#user {
-        color: #6666ff;
-        position: absolute;
-        left: 0;
-        top: 0;
-      }
-    </style>
     <span class="back">★★★★★</span>
     <span id="fore" style$="width: calc(100% * [[rating]] / 5)">★★★★★</span>
     <span id="user"></span>

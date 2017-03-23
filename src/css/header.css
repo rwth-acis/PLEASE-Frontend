@@ -1,23 +1,10 @@
-body {
-  background-color: #ddeeff;
-  margin: 0;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-a {
-  text-decoration: none;
-  padding: 10px;
-  color: #777;
-}
-i {
-  font-family: 'Glyphicons Halflings';
-}
 
 /* header */
 please-header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  border-color: #ddd;
+  border: 1px solid #ddd;
   background-color: #f8f8f8;
   min-height: 50px;
   padding: 0 10px;
@@ -26,18 +13,26 @@ please-header {
   display: flex;
   font-size: 20px;
   font-weight: 200;
+  line-height: 36px;
   color: #777;
   text-shadow: 0 1px 0 #ffffff;
 }
 #brand img {
   padding-right: 10px;
 }
+please-header > * > *, please-header > * {
+  height: 36px;
+}
 please-header > .btn-collapse {
   display: none;
   font-size: 20px;
   width: 33px;
-  height: 29px;
   line-height: 6px;
+  background: #fff;
+  border: 1px solid #ccc;
+}
+please-header.expanded > .btn-collapse {
+  background: #ddd;
 }
 please-header > .btn-new {
   background-color: #ffa300;
@@ -82,6 +77,8 @@ please-header > .btn-new:hover {
 }
 
 
+
+
 /* search */
 search-input {
   display: flex;
@@ -90,6 +87,8 @@ search-input {
 }
 search-input input {
   flex-grow: 1;
+  font-size: 18px;
+  width: 120px;
   border: 1px solid #ccc;
   padding: 6px 12px;
   border-right: 0;
@@ -102,9 +101,7 @@ search-input input:focus {
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
 }
 search-input button {
-  border: none;
   background: white;
-  height: 29px;
   width: 40px;
   border: 1px solid #ccc;
   border-radius: 0px 5px 5px 0;

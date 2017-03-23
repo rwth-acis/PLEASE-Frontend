@@ -1,46 +1,16 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <script src="../../node_modules/adabru-parser/abp.js"></script>
-
-<link rel="import" href="./reqbaz.html">
 
 <dom-module id="app-description">
   <template>
-    <paper-tabs selected="{{selectedTab}}">
-      <template is="dom-repeat" items="[[description.tabs]]">
-        <paper-tab>[[item.header]]</paper-tab>
-      </template>
-    </paper-tabs>
-    <iron-pages selected="[[selectedTab]]">
-      <template is="dom-repeat" items="[[description.tabs]]">
-        <div>
-          <template is="dom-repeat" items="[[item.blocks]]">
-            <p>[[item.content]]<p>
-          </template>
-        </div>
-      </template>
-    </iron-pages>
-    <template is="dom-if" if=[[description.props.reqbaz]]>
-      <app-reqbaz project-id=[[description.props.reqbaz]] auth-fetch=[[authFetch]]></app-reqbaz>
-    </template>
   </template>
-
   <script>
     Polymer({
       is: 'app-description',
       properties: {
-        selectedTab: {
-          type: Number,
-          value: 0
-        },
         parseDescription: {
           value: null,
           notify: true
-        },
-        description: {
-          notify: true,
-          observer: 'update'
         }
       },
       created: function() {
@@ -70,9 +40,6 @@
             }.bind(this)
           )
         }).catch(console.error)
-      },
-      update: function() {
-        this.set('selectedTab', 0)
       }
     });
   </script>
