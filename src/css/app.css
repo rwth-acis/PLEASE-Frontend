@@ -50,6 +50,7 @@ app-page > div {
 /* tabs */
 app-page .tabs {
   display: flex;
+  flex-wrap: wrap;
   position: relative;
   left: -8px;
   bottom: -8px;
@@ -80,4 +81,28 @@ app-page .tabs > button.selected {
 }
 app-page .tabs > button.selected {
   cursor: default;
+}
+
+
+
+/* reqbaz */
+app-reqbaz > div {
+  display: flex;
+  padding: 5px;
+  border: 1px solid #ddd;
+  background: #f8f8f8;
+  border-radius: 8px;
+  cursor: pointer;
+}
+app-reqbaz > div:hover {
+  background: #eee;
+}
+app-reqbaz .votes {
+  flex-grow: 1;
+  text-align: right;
+  white-space: nowrap;
+}
+app-reqbaz a {
+  display: block;
+  text-align: center;
 }

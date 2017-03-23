@@ -3,12 +3,13 @@
 
 <dom-module id="app-reqbaz">
   <template>
-    <a href=[[_url(host,projectId)]]>Go to RequirementsBazaar</a>
     <template is="dom-repeat" items=[[requirements]]>
-      <div>
-        <span>[[item.title]]</span> <span class$="[[item.userVoted]] [[voteState]]" on-tap="vote">[[_calcStar(item.userVoted)]]</span> <span>[[item.upVotes]]</span>
+      <div on-tap="vote">
+        <span>[[item.title]]</span>
+        <span class$="votes [[item.userVoted]] [[voteState]]">[[_calcStar(item.userVoted)]] [[item.upVotes]]</span>
       </div>
     </template>
+    <a href=[[_url(host,projectId)]]>Go to RequirementsBazaar↗</a>
   </template>
 
   <script>
