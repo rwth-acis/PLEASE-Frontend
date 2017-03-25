@@ -2,14 +2,12 @@
 
 <dom-module id="app-builds">
   <template>
-    <ul>
-      <template is="dom-repeat" items="[[_taglist(versions)]]">
-        <li on-tap="postBuild">
-          [[item]]
-        </li>
-      </template>
-    </li>
-    <button on-tap="loadBuilds">refresh</button>
+    <template is="dom-repeat" items="[[_taglist(versions)]]">
+      <button class="version" on-tap="postBuild">
+        [[item]]
+      </button>
+    </template>
+    <button class="refresh" on-tap="loadBuilds">refresh</button>
     <ul>
       <template is="dom-repeat" items="[[_buildlist(builds)]]">
         <li>

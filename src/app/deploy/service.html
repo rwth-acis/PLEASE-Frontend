@@ -6,7 +6,7 @@
   <template>
     <h3>service</h3>
     <jsoneditor-object schema=[[service_schema]] json=[[json]] set-value="[[_setValue()]]"></jsoneditor-object>
-    <button on-tap="postService">deploy service</button>
+    <button on-tap="postService" id="btndeploy" class$="deploy [[deployState]]">deploy service</button>
   </template>
 
   <script>
@@ -14,6 +14,7 @@
       is: 'app-deploy-service',
       properties: {
         json: { value: {} },
+        deployState: { value: 'idle' },
         service_schema: { value: {
           type: 'object',
           props: {
@@ -40,16 +41,23 @@
         return (function(val){this.set('json', val)}).bind(this)
       },
       postService: function(e) {
+        this.set('deployState', 'process')
         reqBody = JSON.stringify(Object.assign({
             app: this.app,
             version: this.version
           }, this.json))
 
-        this.authFetch(`${this.servicerunnerUrl}/deployed`, {method: "POST", body: reqBody})
+        this.authFetch.call(this, `${this.servicerunnerUrl}/deployed`, {method: "POST", body: reqBody})
         .then(r => {
           if(r.status != 201) throw "service deployment failed"
+          this.$.btndeploy.classList.add('success')
+          setTimeout(() => this.set('deployState', 'idle'), 50)
         })
-        .catch(e => console.error(e))
+        .catch(e => {
+          this.$.btndeploy.classList.add('fail')
+          setTimeout(() => this.set('deployState', 'idle'), 50)
+          console.error(e)
+        })
       }
     });
   </script>

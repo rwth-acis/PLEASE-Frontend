@@ -5,18 +5,6 @@
 
 <dom-module id="jsoneditor-object">
   <template>
-    <style>
-      input.required { color: #008800; }
-      input.set, input.added { color: #00cc00; }
-      input.duplicate { color: #aa0000; }
-      ul {
-        list-style: none;
-        padding-left: 10px;
-      }
-      li {
-        display: flex;
-      }
-    </style>
     <ul>
       <template id="list" is="dom-repeat" items="[[elements(schema,json,json.*)]]">
         <li>
@@ -59,16 +47,16 @@
         setTimeout(this.resize.bind(this))
       },
       resize: function() {
+        // console.log(Object.keys(this.json)[0])
         for(li of this.$.list.parentElement.children) {
           if(li.tagName != 'LI') break
           inp = li.children[0]
           // get size at beginning, workaround issue when not visible
-          dummy = document.createElement("span")
-          inp.parentElement.replaceChild(dummy, inp)
-          document.body.append(inp)
-          inp.style.width = 0
-          inp.style.width = inp.scrollWidth + 8
-          dummy.parentElement.replaceChild(inp, dummy)
+          dummy = inp.cloneNode()
+          dummy.style = "width:0; padding:4px"
+          document.body.append(dummy)
+          inp.style.width = dummy.scrollWidth + 8
+          document.body.removeChild(dummy)
         }
       },
       updateKey: function(e) {
@@ -82,19 +70,12 @@
         delete this.json[prevKey]
         if(nextKey == '') {
           this.set('json', Object.assign({},this.json)) // enforce update
-          return setTimeout(() => {this.resize()})
+          return setTimeout(this.resize.bind(this))
         }
         this.json[nextKey] = o
         this.set('json', Object.assign({},this.json)) // enforce update
         this.setValue(this.json)
-        setTimeout(() => {
-          ul = Polymer.dom(this.$.list.root.parentElement)
-          i = this.$.list.items.findIndex((i) => i.name == nextKey)
-          inp = ul.children[i].children[0]
-          inp.focus()
-          inp.style.width = 0
-          inp.style.width = inp.scrollWidth + 8
-        })
+        setTimeout(this.resize.bind(this))
       },
       addProp: function(e) {
         newKey = e.target.value;

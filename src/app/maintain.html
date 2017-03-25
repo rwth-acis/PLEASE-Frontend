@@ -1,0 +1,71 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<dom-module id="app-maintain">
+  <template>
+    <div class="btn-visible" on-tap="toggleHidden">
+      <span>Maintain 🔧</span>
+      <button id='save' on-tap="save" class$="[[saveState]]">[[_btnSave(saveState)]]</button>
+    </div>
+    <div class="tabs">
+      <template is="dom-repeat" items="[[_tabs()]]">
+        <button on-tap="selectTab" disabled=[[_btnSaveDisabled(saveState)]] class$="[[_isSelected(selectedTab, index)]]">[[item]]</button>
+      </template>
+    </div>
+    <div class="main">
+      <iron-pages selected="[[selectedTab]]">
+        <textarea id="ta" class="description" placeholder="# App Title\n\n..." value="{{appData.description}}" on-input="update" style="resize: none; overflow: hidden"></textarea>
+        <app-configuration configuration={{appData}}></app-configuration>
+        <app-builds app=[[app]] versions={{appData.versions}} servicerunner-url=[[servicerunnerUrl]] auth-fetch=[[authFetch]]></app-builds>
+      </iron-pages>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'app-maintain',
+      properties: {
+        selectedTab: { value: 0 },
+        saveState: { value: 'idle' }
+      },
+      observers: [ 'resizeTextarea(appData, appData.description)' ],
+      attached: function() {
+        window.addEventListener('resize', this.resizeTextarea.bind(this))
+      },
+      _tabs: () => ['Description', 'Configuration', 'Builds'],
+      _isSelected: (i,j) => i == j ? 'selected' : '',
+      _btnSave: (s) => ({'idle':'Save', 'saving':'⏳ Save ⏳'}[s]),
+      _btnSaveDisabled: (s) => s == 'saving',
+      selectTab: function(e) {
+        this.set('selectedTab', e.model.index)
+      },
+      toggleHidden: function(e) {
+        if(e.target == this.$.save) return
+        this.root.host.classList.toggle('visible')
+      },
+      resizeTextarea: function() {
+        dummy = this.$.ta.cloneNode()
+        dummy.style.width = this.root.host.firstElementChild.offsetWidth +'px'
+        dummy.style.height = 0
+        document.body.append(dummy)
+        this.$.ta.style.height = dummy.scrollHeight +'px'
+        document.body.removeChild(dummy)
+      },
+      update: function(e) {
+        this.set(['appData','description'], e.target.value)
+      },
+      save: function(e) {
+        this.set('saveState', 'saving')
+        this.authFetch.call(this, `${this.appmetadataUrl}/apps/${this.app}`, {method: "PUT", body: JSON.stringify(this.appData)})
+        .then(r => {
+          if(r.status != 200) throw r.status
+          this.$.save.classList.add('success')
+          setTimeout(() => this.set('saveState', 'idle'), 50)
+        }).catch(e => {
+          console.error(e)
+          this.$.save.classList.add('fail')
+          setTimeout(() => this.set('saveState', 'idle'), 50)
+        })
+      }
+    });
+  </script>
+</dom-module>

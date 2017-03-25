@@ -51,7 +51,7 @@ app-page > .app-container > * {
 app-tabs {
   display: block;
 }
-app-page .tabs {
+app-tabs .tabs {
   display: flex;
   flex-wrap: wrap;
   position: relative;
@@ -59,7 +59,7 @@ app-page .tabs {
   bottom: -8px;
   width: calc(100% + 16px);
 }
-app-page .tabs > button {
+app-tabs .tabs > button {
   flex-grow: 1;
   border-radius: 25px 25px 0 0;
   font-size: 1.2em;
@@ -69,20 +69,20 @@ app-page .tabs > button {
   box-shadow: -1px -1px 5px #aaa;
   border: none;
 }
-app-page .tabs > button:first-child {
+app-tabs .tabs > button:first-child {
   border-radius: 0 25px 0 0;
 }
-app-page .tabs > button:nth-last-child(2) {
+app-tabs .tabs > button:nth-last-child(2) {
   border-radius: 25px 0 0 0;
 }
-app-page .tabs > button:hover {
+app-tabs .tabs > button:hover {
   cursor: pointer;
 }
-app-page .tabs > button:hover,
-app-page .tabs > button.selected {
+app-tabs .tabs > button:hover,
+app-tabs .tabs > button.selected {
   background-color: #3276b1;
 }
-app-page .tabs > button.selected {
+app-tabs .tabs > button.selected {
   cursor: default;
 }
 
@@ -161,3 +161,44 @@ app-comments .comment-head > time {
   text-align: right;
   color: #999;
 }
+
+
+
+/* deployments */
+app-deployments {
+  display: block;
+}
+app-deployments select {
+  padding: 4px;
+}
+app-deployments button.deploy {
+  background-color: #ffa300;
+  border: 1px solid #ddd;
+  color: #fff;
+  text-shadow: 1px 1px 3px #333;
+  font-size: 16px;
+  padding: 8px;
+  transition-duration: .5s;
+}
+app-deployments button.deploy:hover {
+  background-color: #ffb400;
+  text-shadow: 1px 1px 3px #111;
+}
+app-deployments button.deploy.process {
+  cursor: default;
+}
+app-deployments button.deploy.process::after {
+  content: ' ⏳';
+}
+app-deployments button.deploy.success {
+  background: #0f0;
+  transition-duration: 0s;
+}
+app-deployments button.deploy.fail {
+  background: #f00;
+  transition-duration: 0s;
+}
+
+app-deploy-space input.valid { border-color: green; }
+app-deploy-space input.checking { border-color: yellow; }
+app-deploy-space input.error { border-color: red; }

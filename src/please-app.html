@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="css/core.css">
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/maintain.css">
+  <link rel="stylesheet" href="css/jsoneditor.css">
   <template>
     <please-header oidc-client-id=[[oidcClientId]] oidc-provider=[[oidcProvider]] auth-fetch={{authFetch}} appmetadata-url=[[appmetadataUrl]] query-url={{queryUrl}}></please-header>
     <div class="container">
@@ -19,6 +21,7 @@
         <app-create-page appmetadata-url=[[appmetadataUrl]] auth-fetch=[[authFetch]]></app-create-page>
       </iron-pages>
     </div>
+    <div class="footer"></div>
   </template>
 
   <script>

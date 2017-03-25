@@ -10,14 +10,6 @@ so far using callback
 
 <dom-module id="jsoneditor-string">
   <template>
-    <style>
-      textarea {
-        overflow: hidden;
-        padding: 4px;
-        resize: none;
-        white-space: pre;
-      }
-    </style>
     <textarea id="ta" placeholder="[[schema.placeholder]]" value="[[json]]" on-input="update"></textarea>
   </template>
 
@@ -27,7 +19,6 @@ so far using callback
       properties: { json: { observer: 'resize' } },
       update: function(e) {
         this.setValue(e.target.value)
-        setTimeout(() => {e.target.focus()})
         // resize
         this.$.ta.style.height = 0
         this.$.ta.style.width = 0
@@ -39,14 +30,12 @@ so far using callback
       },
       resize: function() {
         // get size at beginning, workaround issue when not visible
-        dummy = document.createElement("span")
-        this.$.ta.parentElement.replaceChild(dummy, this.$.ta)
-        document.body.append(this.$.ta)
-        this.$.ta.style.height = 0
-        this.$.ta.style.width = 0
-        this.$.ta.style.height = this.$.ta.scrollHeight
-        this.$.ta.style.width = this.$.ta.scrollWidth + 8
-        dummy.parentElement.replaceChild(this.$.ta, dummy)
+        dummy = this.$.ta.cloneNode()
+        dummy.style = "width:0; height:0; resize:none; overflow:hidden; white-space:pre; padding:4px"
+        document.body.append(dummy)
+        this.$.ta.style.height = dummy.scrollHeight
+        this.$.ta.style.width = dummy.scrollWidth + 8
+        document.body.removeChild(dummy)
       }
     });
   </script>

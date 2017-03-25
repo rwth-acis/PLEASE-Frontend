@@ -5,17 +5,9 @@
 
 <dom-module id="app-deploy-space">
   <template>
-    <style>
-      input.valid { border-color: green; }
-      input.checking { border-color: yellow; }
-      input.error { border-color: red; }
-      button.process { border-color: yellow; }
-      button.success { border-color: green; }
-      button.error { border-color: red; }
-    </style>
     <h3>role space</h3>
     <jsoneditor-object schema=[[space_schema]] json=[[json]] set-value="[[_setValue()]]"></jsoneditor-object>
-    <button id="btnrole" class$=[[deployState]] disabled=[[_btnDisabled(labelState,deployState)]] on-tap="postSpace">deploy role space</button>
+    <button id="btnrole" class$="deploy [[deployState]]" disabled=[[_btnDisabled(labelState,deployState)]] on-tap="postSpace">deploy role space</button>
     <input class$=[[labelState]] disabled=[[_inputDisabled(deployState)]] placeholder="space label" on-input="update" class$=[[labelState]]></input>
     <span class$=[[labelState]]>[[labelMessage]]</span>
     <br>
@@ -149,11 +141,13 @@
           })
         })
         .then(function() {
-          this.set('deployState', 'success')
+          this.$.btnrole.classList.add('success')
+          setTimeout(() => this.set('deployState', 'idle'), 50)
           this.set('deployMessage', `created space <a href="${this.roleUrl}/spaces/${this.label}">${this.label}</a>`)
         }.bind(this))
         .catch(function(e) {
-          this.set('deployState', 'error')
+          this.$.btnrole.classList.add('fail')
+          setTimeout(() => this.set('deployState', 'idle'), 50)
           this.set('deployMessage', e)
         }.bind(this))
       }

@@ -1,0 +1,67 @@
+jsoneditor-array ul {
+  list-style: none;
+  padding-left: 10px;
+}
+jsoneditor-array li {
+  display: flex;
+}
+jsoneditor-array button {
+  border-radius: 15px 0 0 15px;
+}
+
+
+jsoneditor-object input.unset { color: #aaa; }
+jsoneditor-object input.required { color: #008800; }
+jsoneditor-object input::placeholder { color: #ddd; }
+jsoneditor-object input.set, input.added { color: #000; }
+jsoneditor-object input.duplicate { color: #aa0000; }
+jsoneditor-object {
+  display: inline-block;
+}
+jsoneditor-object li {
+  margin: 3px;
+  padding: 0;
+}
+jsoneditor-object input.added {
+  background: rgba(200, 200, 100, .2);
+}
+jsoneditor-object input:placeholder-shown {
+  background: #ffd;
+}
+jsoneditor-object input {
+  background: rgba(66, 139, 192, .15);
+  border-radius: 15px 0 0 15px;
+  padding: 4px;
+  font-size: .9em;
+  border: none;
+}
+jsoneditor-object input ~ * {
+  background: rgba(66, 139, 192, .15);
+  border-radius: 0 15px 15px 0;
+}
+jsoneditor-object ul {
+  list-style: none;
+  padding: 0;
+}
+jsoneditor-object li {
+  display: inline-flex;
+}
+
+
+jsoneditor-string textarea {
+  overflow: hidden;
+  padding: 4px;
+  resize: none;
+  white-space: pre;
+  border: none;
+  border-radius: 0 15px 15px 0;
+}
+jsoneditor-string textarea::placeholder {
+  color: #ddd;
+}
+
+
+jsoneditor-enum select {
+  padding: 4px;
+  border-radius: 0 15px 15px 0;
+}

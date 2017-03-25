@@ -1,0 +1,141 @@
+/* core */
+app-maintain {
+  display: block;
+}
+app-maintain .btn-visible {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #428bca;
+  box-shadow: 1px 1px 5px #aaa;
+  color: #fff;
+  text-shadow: 1px 1px 3px #333;
+  font-size: 16px;
+  padding: 8px;
+  cursor: pointer;
+}
+app-maintain .btn-visible span {
+  padding: 8px;
+}
+app-maintain .main {
+  display: none;
+  overflow: auto;
+}
+app-maintain > .btn-visible:hover,
+app-maintain.visible .btn-visible {
+  background-color: #3276b1;
+}
+app-maintain.visible .main {
+  display: block;
+}
+app-maintain button#save {
+  background-color: #ffa300;
+  border: 1px solid #ddd;
+  width: 50%;
+  color: #fff;
+  text-shadow: 1px 1px 3px #333;
+  font-size: 16px;
+  padding: 8px;
+  cursor: pointer;
+  display: none;
+  transition-duration: .5s;
+}
+app-maintain button#save.saving {
+  cursor: default;
+}
+app-maintain button#save.fail:hover,
+app-maintain button#save.fail {
+  transition-duration: 0s;
+  background-color: #f00;
+}
+app-maintain button#save.success:hover,
+app-maintain button#save.success {
+  transition-duration: 0s;
+  background-color: #0f0;
+}
+app-maintain.visible button#save {
+  display: inline;
+}
+app-maintain button#save:hover {
+  background-color: #ffb400;
+  text-shadow: 1px 1px 3px #111;
+}
+app-maintain .tabs {
+  display: none;
+}
+app-maintain.visible .tabs {
+  display: flex;
+}
+app-maintain .tabs > button {
+  flex-grow: 1;
+  border-radius: 0 0 25px 25px;
+  font-size: 1.2em;
+  padding: 5px 20px;
+  color: #fff;
+  background: linear-gradient(#3276b1, #428bca 20%);
+  box-shadow: 1px 2px 3px #aaa;
+  border: none;
+  cursor: pointer;
+}
+app-maintain .tabs > button.selected,
+app-maintain .tabs > button:hover {
+  background: #3276b1;
+}
+app-maintain .tabs > button.selected {
+  cursor: default;
+}
+app-maintain .tabs > button:first-child {
+  border-radius: 0 0 25px 0;
+}
+app-maintain .tabs > button:nth-last-child(2) {
+  border-radius: 0 0 0 25px;
+}
+@media only screen and (max-width: 500px) {
+  app-maintain .tabs > button {
+    font-size: 1em;
+    padding: 5px;
+    border-radius: 0 0 10px 10px;
+  }
+  app-maintain .tabs > button:first-child {
+    border-radius: 0 0 10px 0;
+  }
+  app-maintain .tabs > button:nth-last-child(2) {
+    border-radius: 0 0 0 10px;
+  }
+}
+
+
+/* description */
+app-maintain textarea.description {
+  width: 100%;
+  min-height: 20em;
+}
+
+
+/* configuration */
+
+/* builds */
+app-builds {
+  display: block;
+  padding: 8px;
+}
+app-builds ul {
+  list-style-type: none;
+}
+app-builds button.refresh {
+  font-size: 1em;
+  background: #fff;
+  border: 1px solid #ccc;
+}
+app-builds button.version {
+  background-color: #ffa300;
+  border: 1px solid #ddd;
+  color: #fff;
+  text-shadow: 1px 1px 3px #333;
+  font-size: 16px;
+  padding: 8px;
+}
+app-builds button.version:hover {
+  background-color: #ffb400;
+  text-shadow: 1px 1px 3px #111;
+}

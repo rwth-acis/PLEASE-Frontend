@@ -8,7 +8,7 @@
 <dom-module id="app-deployments">
   <template>
     <select id="version" on-change="selectVersion">
-      <option value="">please select version...</option>
+      <option value="">deploy</option>
       <template is="dom-repeat" items="[[_taglist(versions)]]">
         <option value="[[item]]">[[item]]</option>
       </template>
@@ -21,14 +21,11 @@
       <app-deploy-space app=[[app]] version=[[version]] json=[[_json('space',version,versions)]] auth-fetch=[[authFetch]]
         servicerunner-url=[[servicerunnerUrl]] role-url=[[roleUrl]]></app-deploy-space>
     </template>
-    <h2>active deployments</h2>
-    <ul>
+    <p>active:
       <template is="dom-repeat" items="[[deployments]]">
-        <li>
-          <strong>[[item]]</strong>
-        </li>
+        <strong>[[item]]</strong>
       </template>
-    </ul>
+    </p>
   </template>
 
   <script>
