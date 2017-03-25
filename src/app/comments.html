@@ -10,7 +10,7 @@
   <template>
     <div class="add-comment">
       <textarea id="commenttext" placeholder="What do you think?"></textarea>
-      <button on-tap="postComment">Add Comment</button>
+      <button id="post" on-tap="postComment" class$="post [[postState]]">Add Comment</button>
     </div>
     <template is="dom-repeat" items="[[comments]]">
       <div class="comment">
@@ -30,6 +30,7 @@
       is: 'app-comments',
       properties: {
         app: { observer: 'loadComments' },
+        postState: { value: 'idle' },
         comments: {
           type: Array,
           value: () => []
@@ -45,9 +46,18 @@
         return `${h}:${m} ${D}-${M}-${Y}`
       },
       postComment: function() {
-        this.authFetch(`${this.appmetadataUrl}/apps/${this.app}/comments`, {method: "POST", body: this.$.commenttext.value})
-        .then(r => {if(r.status == 200) this.loadComments()})
-        .catch(e => console.error(e))
+        this.set('postState', 'process')
+        this.authFetch.call(this, `${this.appmetadataUrl}/apps/${this.app}/comments`, {method: "POST", body: this.$.commenttext.value})
+        .then(r => {
+          if(r.status != 200) throw r.status
+          this.loadComments()
+          this.$.post.classList.add('success')
+          setTimeout(() => this.set('postState', 'idle'), 50)
+        }).catch(e => {
+          this.$.post.classList.add('fail')
+          setTimeout(() => this.set('postState', 'idle'), 50)
+          console.error(e)
+        })
       },
       loadComments: function() {
         if(this.app == -1) return

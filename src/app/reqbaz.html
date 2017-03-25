@@ -4,10 +4,10 @@
 <dom-module id="app-reqbaz">
   <template>
     <template is="dom-repeat" items=[[requirements]]>
-      <div on-tap="vote">
+      <button on-tap="vote" class$="post [[postState]]">
         <span>[[item.title]]</span>
-        <span class$="votes [[item.userVoted]] [[voteState]]">[[_calcStar(item.userVoted)]] [[item.upVotes]]</span>
-      </div>
+        <span class$="votes [[item.userVoted]]">[[_calcStar(item.userVoted)]] [[item.upVotes]]</span>
+      </button>
     </template>
     <a href=[[_url(host,projectId)]]>Go to RequirementsBazaar↗</a>
   </template>
@@ -19,7 +19,7 @@
         host: { value: "https://requirements-bazaar.org" },
         category: { value: null },
         requirements: { value: [] },
-        voteState: { value: 'idle' }
+        postState: { value: 'idle' }
       },
       observers: ['reload(host, projectId, category, authFetch)'],
       _url: (host, id) => `${host}/projects/${id}`,
@@ -30,16 +30,24 @@
         .then(r => r.json())
         .then(d => authFetch.call(this, `${host}/bazaar/components/${d.defaultComponentId}/requirements`))
         .then(r => r.json())
-        .then(d => {this.set('requirements', d); this.set('voteState', 'idle')})
+        .then(d => {this.set('requirements', d); this.set('postState', 'idle')})
         .catch(console.error)
       },
-      vote: function(e) {
-        if(this.voteState == 'waiting') return
-        item = e.model.item
-        this.set('voteState', 'waiting')
+      vote: function(event) {
+        if(this.postState == 'process') return
+        item = event.model.item
+        this.set('postState', 'process')
         this.authFetch.call(this, `${this.host}/bazaar/requirements/${item.id}/votes`, {method: (item.userVoted == 'UP_VOTE') ? 'DELETE' : 'POST'})
-        .then(r => this.reload(this.host,this.projectId,this.category,this.authFetch))
-        .catch(e => console.error(e) && this.set('voteState', 'idle'))
+        .then(r => {
+          if(r.status != 200 && r.status != 201) throw r.status
+          event.path.find(i=>i.tagName=='BUTTON').classList.add('success')
+          setTimeout(() => this.set('postState', 'idle'), 50)
+          this.reload(this.host,this.projectId,this.category,this.authFetch)
+        }).catch(e => {
+          console.error(e)
+          event.path.find(i=>i.tagName=='BUTTON').classList.add('fail')
+          setTimeout(() => this.set('postState', 'idle'), 50)
+        })
       }
     });
   </script>

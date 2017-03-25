@@ -1,3 +1,5 @@
+<!-- This file is a subset of the normal app page.html -->
+
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../description.html">
@@ -5,72 +7,100 @@
 
 <dom-module id="app-create-page">
   <template>
-    <style>
-      textarea {
-        width: 500px;
-        height: 400px;
-      }
-    </style>
-    <textarea value="{{appData.description::input}}" placeholder="omitted"></textarea>
-    <h2>[[parsedDescription.title]]</h2>
-    <app-description description=[[parsedDescription]] parse-description={{parseDescription}} auth-fetch=[[authFetch]]></app-description>
-    <app-configuration configuration=[[appData]]></app-configuration>
-    <button disabled="[[_btn('disabled',btnState)]]" on-tap="postApp">[[_btn('text',btnState)]]</button>
+    <app-description parse-description={{parseDescription}}></app-description>
+
+    <app-header header=[[_header(appData,parsedDescription)]]></app-header>
+
+    <div class="app-container">
+      <app-tabs tabs=[[parsedDescription.tabs]]></app-tabs>
+
+      <template is="dom-if" if=[[parsedDescription.props.reqbaz]]>
+        <app-reqbaz project-id=[[parsedDescription.props.reqbaz]] auth-fetch=[[authFetch]]></app-reqbaz>
+      </template>
+
+      <div>
+        <div class="tabs">
+          <template is="dom-repeat" items="[[_tabs()]]">
+            <button on-tap="selectTab" class$="[[_isSelected(selectedTab, index)]]">[[item]]</button>
+          </template>
+        </div>
+        <div class="main">
+          <iron-pages selected="[[selectedTab]]">
+            <textarea id="ta" class="description" placeholder="# App Title\n\n..." value="{{appData.description}}" on-input="update" style="resize: none; overflow: hidden"></textarea>
+            <app-configuration configuration={{appData}}></app-configuration>
+          </iron-pages>
+        </div>
+      </div>
+    </div>
+
+    <button id='post' on-tap="postApp" disabled=[[_equals(postState,'process')]] class$="post [[postState]]">Create</button>
   </template>
 
   <script>
     Polymer({
-      self: 5,
       is: 'app-create-page',
-      observers: ['_parseDescription(appData.description,parseDescription)'],
-      _parseDescription: function(description, parseDescription) {
-        if(!description || !parseDescription) return
-        return parseDescription(description)
-      },
       properties: {
-        appmetadataUrl: String,
         parsedDescription: { computed: '_parseDescription(appData.description,parseDescription)' },
+        selectedTab: { value: 0 },
         appData: {
           value: {
             description: `
-# This is your app title
+# App Title
 
-## Sample tab
+## Example Tab
 
-First paragraph
-
-Second paragraph
-
-## Sample tab
+Lore ipsum dolorem
 `,
             autobuild: [],
             versions: {}
           }
         },
-        btnState: {
-          type: String,
-          value: "prepared"
-        },
+        postState: { value: 'idle' }
       },
-      postApp: function(event) {
-        this.set('btnState', 'sending')
+      observers: [ 'resizeTextarea(appData.description)' ],
+      _equals: (i,j) => i == j,
+      _tabs: () => ['Description', 'Configuration'],
+      _parseDescription: function(description, parseDescription) {
+        if(!description || !parseDescription) return
+        return parseDescription(description)
+      },
+      _header: function(appData, parsedDescription) {
+        if (!appData || !parsedDescription) {
+          return {title: '',rating: 1, platforms: []}
+        } else
+          return {
+            title: parsedDescription.title,
+            rating: 1,
+            platforms: [],
+            creator: 'you'
+          }
+      },
+      _isSelected: (i,j) => i == j ? 'selected' : '',
+      resizeTextarea: function() {
+        dummy = this.$.ta.cloneNode()
+        dummy.style.width = this.$.ta.parentNode.offsetWidth +'px'
+        dummy.style.height = 0
+        document.body.append(dummy)
+        this.$.ta.style.height = dummy.scrollHeight +'px'
+        document.body.removeChild(dummy)
+      },
+      selectTab: function(e) { this.set('selectedTab', e.model.index) },
+      update: function(e) {
+        this.set(['appData','description'], e.target.value)
+      },
+      postApp: function() {
+        this.set('postState', 'process')
         this.authFetch(`${this.appmetadataUrl}/apps`, {method: "POST", body: JSON.stringify(this.appData)})
         .then(response => response.json())
         .then(data => {
-          this.set('btnState', 'prepared')
+          this.$.post.classList.add('success')
+          setTimeout(() => this.set('postState', 'idle'), 50)
           window.location.hash=`#apps/${data.app}`
         }).catch((error) => {
+          this.$.post.classList.add('fail')
+          setTimeout(() => this.set('postState', 'idle'), 50)
           console.error(error)
-          this.set('btnState', 'error')
         })
-      },
-      _btn: function(key) {
-        switch(this.btnState) {
-          case "prepared": return {disabled:false, text:"create"}[key]
-          case "error": return {disabled:false, text:"retry"}[key]
-          case "sending": return {disabled:true, text:"sending request…"}[key]
-          default: return {disabled:false, text:"unknown"}[key]
-        }
       }
     });
   </script>

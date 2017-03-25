@@ -6,7 +6,7 @@
   <template>
     <h3>service</h3>
     <jsoneditor-object schema=[[service_schema]] json=[[json]] set-value="[[_setValue()]]"></jsoneditor-object>
-    <button on-tap="postService" id="btndeploy" class$="deploy [[deployState]]">deploy service</button>
+    <button on-tap="postService" id="btndeploy" class$="post [[deployState]]">deploy service</button>
   </template>
 
   <script>
@@ -52,6 +52,7 @@
           if(r.status != 201) throw "service deployment failed"
           this.$.btndeploy.classList.add('success')
           setTimeout(() => this.set('deployState', 'idle'), 50)
+          if(this.callback) this.callback()
         })
         .catch(e => {
           this.$.btndeploy.classList.add('fail')

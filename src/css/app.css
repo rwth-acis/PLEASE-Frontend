@@ -90,9 +90,12 @@ app-tabs .tabs > button.selected {
 
 /* reqbaz */
 app-reqbaz {
-  display: block;
+  display: flex;
+  flex-direction: column;
 }
-app-reqbaz > div {
+app-reqbaz > button.post {
+  color: #000;
+  text-shadow: none;
   display: flex;
   padding: 5px;
   border: 1px solid #ddd;
@@ -100,8 +103,9 @@ app-reqbaz > div {
   border-radius: 8px;
   cursor: pointer;
 }
-app-reqbaz > div:hover {
+app-reqbaz > button.post:hover {
   background: #eee;
+  text-shadow: none;
 }
 app-reqbaz .votes {
   flex-grow: 1;
@@ -124,18 +128,6 @@ app-comments .add-comment {
 }
 app-comments textarea {
   flex-grow: 1;
-}
-app-comments button {
-  background-color: #ffa300;
-  border: 1px solid #ddd;
-  color: #fff;
-  text-shadow: 1px 1px 3px #333;
-  font-size: 16px;
-  padding: 8px;
-}
-app-comments button:hover {
-  background-color: #ffb400;
-  text-shadow: 1px 1px 3px #111;
 }
 app-comments .comment::before {
   content: "";
@@ -171,34 +163,6 @@ app-deployments {
 app-deployments select {
   padding: 4px;
 }
-app-deployments button.deploy {
-  background-color: #ffa300;
-  border: 1px solid #ddd;
-  color: #fff;
-  text-shadow: 1px 1px 3px #333;
-  font-size: 16px;
-  padding: 8px;
-  transition-duration: .5s;
-}
-app-deployments button.deploy:hover {
-  background-color: #ffb400;
-  text-shadow: 1px 1px 3px #111;
-}
-app-deployments button.deploy.process {
-  cursor: default;
-}
-app-deployments button.deploy.process::after {
-  content: ' ⏳';
-}
-app-deployments button.deploy.success {
-  background: #0f0;
-  transition-duration: 0s;
-}
-app-deployments button.deploy.fail {
-  background: #f00;
-  transition-duration: 0s;
-}
-
 app-deploy-space input.valid { border-color: green; }
 app-deploy-space input.checking { border-color: yellow; }
 app-deploy-space input.error { border-color: red; }

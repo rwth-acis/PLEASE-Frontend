@@ -1,0 +1,45 @@
+app-create-page > .app-container > * {
+  box-shadow: 1px 1px 10px #999;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 33px 0;
+}
+
+app-create-page textarea.description {
+  width: 100%;
+  min-height: 20em;
+}
+
+app-create-page .tabs {
+  display: flex;
+}
+
+app-create-page .tabs > button {
+  flex-grow: 1;
+  border-radius: 0 0 25px 25px;
+  font-size: 1.2em;
+  padding: 5px 20px;
+  color: #fff;
+  background: linear-gradient(#3276b1, #428bca 20%);
+  box-shadow: 1px 2px 3px #aaa;
+  border: none;
+  cursor: pointer;
+}
+app-create-page .tabs > button.selected,
+app-create-page .tabs > button:hover {
+  background: #3276b1;
+}
+app-create-page .tabs > button.selected {
+  cursor: default;
+}
+app-create-page .tabs > button:first-child {
+  border-radius: 0 0 25px 0;
+}
+app-create-page .tabs > button:nth-last-child(2) {
+  border-radius: 0 0 0 25px;
+}
+
+app-create-page button.post {
+  display: block;
+  width: 100%;
+}

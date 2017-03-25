@@ -3,7 +3,7 @@
 <dom-module id="app-builds">
   <template>
     <template is="dom-repeat" items="[[_taglist(versions)]]">
-      <button class="version" on-tap="postBuild">
+      <button class="post version" on-tap="postBuild">
         [[item]]
       </button>
     </template>

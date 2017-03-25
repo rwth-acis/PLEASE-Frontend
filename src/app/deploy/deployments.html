@@ -15,11 +15,11 @@
     </select>
     <template is="dom-if" if="[[_enabled('service',version)]]">
       <app-deploy-service app=[[app]] version=[[version]] json=[[_json('service',version,versions)]] auth-fetch=[[authFetch]]
-        servicerunner-url=[[servicerunnerUrl]]></app-deploy-service>
+        servicerunner-url=[[servicerunnerUrl]] callback=[[_loadDeployments()]]></app-deploy-service>
     </template>
     <template is="dom-if" if="[[_enabled('space',version)]]">
       <app-deploy-space app=[[app]] version=[[version]] json=[[_json('space',version,versions)]] auth-fetch=[[authFetch]]
-        servicerunner-url=[[servicerunnerUrl]] role-url=[[roleUrl]]></app-deploy-space>
+        servicerunner-url=[[servicerunnerUrl]] role-url=[[roleUrl]] callback=[[_loadDeployments()]]></app-deploy-space>
     </template>
     <p>active:
       <template is="dom-repeat" items="[[deployments]]">
@@ -73,6 +73,7 @@
         d = new Date(timestamp)
         return `${d.getFullYear()}-${d.getMonth()}-${d.getDay()}  ${d.getHours()}:${d.getMinutes()}`
       },
+      _loadDeployments: function() { return this.loadDeployments.bind(this) },
       loadDeployments: function() {
         if(this.app == -1) return
         fetch(`${this.servicerunnerUrl}/deployed?app=${this.app}`)

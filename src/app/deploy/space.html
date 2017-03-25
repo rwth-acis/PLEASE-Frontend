@@ -7,7 +7,7 @@
   <template>
     <h3>role space</h3>
     <jsoneditor-object schema=[[space_schema]] json=[[json]] set-value="[[_setValue()]]"></jsoneditor-object>
-    <button id="btnrole" class$="deploy [[deployState]]" disabled=[[_btnDisabled(labelState,deployState)]] on-tap="postSpace">deploy role space</button>
+    <button id="post" class$="post [[deployState]]" disabled=[[_btnDisabled(labelState,deployState)]] on-tap="postSpace">deploy role space</button>
     <input class$=[[labelState]] disabled=[[_inputDisabled(deployState)]] placeholder="space label" on-input="update" class$=[[labelState]]></input>
     <span class$=[[labelState]]>[[labelMessage]]</span>
     <br>
@@ -103,6 +103,7 @@
         this.authFetch(`${this.servicerunnerUrl}/deployed`, {method: 'POST', body: reqBody})
         .then(r => {
           if(r.status != 201) throw "service deployment failed"
+          if(this.callback) this.callback()
           return r.json()
         })
         .then(d => {
@@ -141,12 +142,12 @@
           })
         })
         .then(function() {
-          this.$.btnrole.classList.add('success')
+          this.$.post.classList.add('success')
           setTimeout(() => this.set('deployState', 'idle'), 50)
           this.set('deployMessage', `created space <a href="${this.roleUrl}/spaces/${this.label}">${this.label}</a>`)
         }.bind(this))
         .catch(function(e) {
-          this.$.btnrole.classList.add('fail')
+          this.$.post.classList.add('fail')
           setTimeout(() => this.set('deployState', 'idle'), 50)
           this.set('deployMessage', e)
         }.bind(this))

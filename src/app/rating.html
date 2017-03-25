@@ -32,6 +32,7 @@
       tap: function(e){
         i = Math.min(5, Math.floor((e.detail.x-this.offsetLeft) / this.clientWidth * 5) + 1)
         this.set('userRating', i)
+        if(this.app == -1) return
         this.authFetch(`${this.appmetadataUrl}/apps/${this.app}/rating`, {method: "POST", body: ""+i})
         .then(r => {if(r.status == 200) this.loadRating()})
         .catch(e => console.error(e))

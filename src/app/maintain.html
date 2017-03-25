@@ -4,11 +4,11 @@
   <template>
     <div class="btn-visible" on-tap="toggleHidden">
       <span>Maintain 🔧</span>
-      <button id='save' on-tap="save" class$="[[saveState]]">[[_btnSave(saveState)]]</button>
+      <button id='save' on-tap="save" disabled=[[_equals(saveState,'process')]] class$="post [[saveState]]">Save</button>
     </div>
     <div class="tabs">
       <template is="dom-repeat" items="[[_tabs()]]">
-        <button on-tap="selectTab" disabled=[[_btnSaveDisabled(saveState)]] class$="[[_isSelected(selectedTab, index)]]">[[item]]</button>
+        <button on-tap="selectTab" class$="[[_isSelected(selectedTab, index)]]">[[item]]</button>
       </template>
     </div>
     <div class="main">
@@ -32,9 +32,8 @@
         window.addEventListener('resize', this.resizeTextarea.bind(this))
       },
       _tabs: () => ['Description', 'Configuration', 'Builds'],
+      _equals: (i,j) => i == j,
       _isSelected: (i,j) => i == j ? 'selected' : '',
-      _btnSave: (s) => ({'idle':'Save', 'saving':'⏳ Save ⏳'}[s]),
-      _btnSaveDisabled: (s) => s == 'saving',
       selectTab: function(e) {
         this.set('selectedTab', e.model.index)
       },
@@ -54,7 +53,7 @@
         this.set(['appData','description'], e.target.value)
       },
       save: function(e) {
-        this.set('saveState', 'saving')
+        this.set('saveState', 'process')
         this.authFetch.call(this, `${this.appmetadataUrl}/apps/${this.app}`, {method: "PUT", body: JSON.stringify(this.appData)})
         .then(r => {
           if(r.status != 200) throw r.status

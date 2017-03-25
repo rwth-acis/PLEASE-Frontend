@@ -37,3 +37,32 @@ please-app .footer::after {
     padding: 0 8px;
   }
 }
+
+
+button.post {
+  background: #ffa300;
+  border: 1px solid #ddd;
+  color: #fff;
+  text-shadow: 1px 1px 3px #333;
+  font-size: 16px;
+  padding: 8px;
+  transition-duration: .5s;
+}
+button.post:hover {
+  background: #ffb400;
+  text-shadow: 1px 1px 3px #111;
+}
+button.post.process { cursor: default; }
+button.post::before { content: '⏳ '; visibility: hidden; }
+button.post::after  { content: ' ⏳'; visibility: hidden; }
+button.post.process::after { visibility: visible; }
+button.post.success:hover,
+button.post.success {
+  background: #0f0;
+  transition-duration: 0s;
+}
+button.post.fail:hover,
+button.post.fail {
+  background: #f00;
+  transition-duration: 0s;
+}

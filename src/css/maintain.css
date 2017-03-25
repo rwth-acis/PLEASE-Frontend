@@ -6,7 +6,7 @@ app-maintain .btn-visible {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #428bca;
+  background: #428bca;
   box-shadow: 1px 1px 5px #aaa;
   color: #fff;
   text-shadow: 1px 1px 3px #333;
@@ -23,42 +23,17 @@ app-maintain .main {
 }
 app-maintain > .btn-visible:hover,
 app-maintain.visible .btn-visible {
-  background-color: #3276b1;
+  background: #3276b1;
 }
 app-maintain.visible .main {
   display: block;
 }
 app-maintain button#save {
-  background-color: #ffa300;
-  border: 1px solid #ddd;
   width: 50%;
-  color: #fff;
-  text-shadow: 1px 1px 3px #333;
-  font-size: 16px;
-  padding: 8px;
-  cursor: pointer;
   display: none;
-  transition-duration: .5s;
-}
-app-maintain button#save.saving {
-  cursor: default;
-}
-app-maintain button#save.fail:hover,
-app-maintain button#save.fail {
-  transition-duration: 0s;
-  background-color: #f00;
-}
-app-maintain button#save.success:hover,
-app-maintain button#save.success {
-  transition-duration: 0s;
-  background-color: #0f0;
 }
 app-maintain.visible button#save {
   display: inline;
-}
-app-maintain button#save:hover {
-  background-color: #ffb400;
-  text-shadow: 1px 1px 3px #111;
 }
 app-maintain .tabs {
   display: none;
@@ -126,16 +101,4 @@ app-builds button.refresh {
   font-size: 1em;
   background: #fff;
   border: 1px solid #ccc;
-}
-app-builds button.version {
-  background-color: #ffa300;
-  border: 1px solid #ddd;
-  color: #fff;
-  text-shadow: 1px 1px 3px #333;
-  font-size: 16px;
-  padding: 8px;
-}
-app-builds button.version:hover {
-  background-color: #ffb400;
-  text-shadow: 1px 1px 3px #111;
 }
