@@ -15,4 +15,6 @@ PropUnknown ← [^\n]*
 Tabs ← Tab+
 Tab ← Header? :'\n'* (Block :'\n'*)*
 Header ← :'##' :' '* [^\n]*
-Block ← (!'##' !'\n\n' .)+
+Block ← (!'##' !'\n\n' Span)+
+Span ↖ Emph | .
+Emph ← :'*' [^\n*]+ :'*'

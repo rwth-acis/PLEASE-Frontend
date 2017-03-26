@@ -7,13 +7,9 @@
     <template is="dom-if" if=[[thumbnail]]>
       <img src=[[thumbnail]] />
     </template>
-    <iron-pages selected="[[selectedTab]]">
+    <iron-pages id=tabs selected="[[selectedTab]]">
       <template is="dom-repeat" items="[[tabs]]">
-        <div>
-          <template is="dom-repeat" items="[[item.blocks]]">
-            <p>[[item.content]]<p>
-          </template>
-        </div>
+        <div></div>
       </template>
     </iron-pages>
     <div class="tabs">
@@ -27,15 +23,20 @@
     Polymer({
       is: 'app-tabs',
       properties: {
-        tabs: {
-          value: [],
-          observer: 'update'
-        },
+        tabs: { value: [] },
         selectedTab: { value: 0 }
       },
+      observers: ['update(tabs)'],
       _isSelected: (i,j) => i == j ? 'selected' : '',
-      update: function() {
-        this.set('selectedTab', 0)
+      update: function(tabs) {
+        if(this.selectedTab >= tabs.length)
+          this.set('selectedTab', tabs.length - 1)
+        setTimeout(() => {
+          this.tabs.forEach((t,i) => {
+            this.$.tabs.children[i].innerHTML = ""
+            t.blocks.forEach(b => this.$.tabs.children[i].appendChild(b))
+          })
+        })
       },
       selectTab: function(e) {
         this.set('selectedTab', e.model.index)

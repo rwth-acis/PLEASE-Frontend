@@ -30,11 +30,15 @@
                     header: (c = ast.children.find(c => c.name == 'Header')) ? c.children[0] : '',
                     blocks: ast.children.filter(c => c.name == 'Block').map(build)
                   }
-                  case 'Block': return {content: ast.children[0]}
+                  case 'Block':
+                    p = document.createElement('p')
+                    ast.children.map(build).forEach(c => p.appendChild(c))
+                    return p
+                  case 'Emph': e=document.createElement('strong'); e.innerText=ast.children[0]; return e
                   case 'PropReqbaz': return {'reqbaz': ast.children[0]}
                   case 'PropThumbnail': return {'thumbnail': ast.children[0]}
                   case 'PropUnknown': return {'unknown': ast.children[0]}
-                  default: return ''
+                  default: e=document.createElement('span'); e.innerText=ast; return e
                 }
               }
               return build(ast)
