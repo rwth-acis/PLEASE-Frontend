@@ -32,8 +32,11 @@
       queryChange: function() {
         fetch(this.queryUrl)
         .then(response => response.json())
-        .then(data => this.set('results', data))
-        .catch(error => console.error(error))
+        .then(data => {
+          data.forEach(d => d.description=this.parseDescription(d.description))
+          data.sort((i,j) => j.rating - i.rating)
+          this.set('results', data)
+        }).catch(error => console.error(error))
       }
     });
   </script>

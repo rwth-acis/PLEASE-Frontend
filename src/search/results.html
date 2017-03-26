@@ -2,29 +2,21 @@
 
 <dom-module id="search-results">
   <template>
-    <style>
-      a {
-        display: block
-      }
-      ul {
-        list-style-type: none;
-      }
-      li {
-        padding: 5px;
-      }
-      strong {
-        padding: 5px;
-      }
-    </style>
-    <ul>
-      <template is="dom-repeat" items="[[results]]">
-        <li>
-          <a href="#apps/[[item.app]]">
-            <strong>[[item.rating]]</strong><span>[[item.description]]</span>
-          </a>
-        </li>
-      </template>
-    </ul>
+    <template is="dom-repeat" items="[[results]]">
+      <a href="#apps/[[item.app]]">
+        <img src=[[_thumb(item.description.props.thumbnail)]] />
+        <div>
+          <div class="rating">
+            <span class="back">★★★★★</span>
+            <span class="fore" style$="width: calc(100% * [[item.rating]] / 5)">★★★★★</span>
+          </div>
+          <h3>[[item.description.title]]</h3>
+        </div>
+        <p>
+          [[item.description.tabs.0.blocks.0.content]]
+        </p>
+      </a>
+    </template>
   </template>
 
   <script>
@@ -43,7 +35,8 @@
             rating: 1.123
           }]
         }
-      }
+      },
+      _thumb: (t) => t ? t : ''
     });
   </script>
 </dom-module>

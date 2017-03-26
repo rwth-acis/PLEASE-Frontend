@@ -4,6 +4,9 @@
 
 <dom-module id="app-tabs">
   <template>
+    <template is="dom-if" if=[[thumbnail]]>
+      <img src=[[thumbnail]] />
+    </template>
     <iron-pages selected="[[selectedTab]]">
       <template is="dom-repeat" items="[[tabs]]">
         <div>

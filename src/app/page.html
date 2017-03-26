@@ -14,12 +14,10 @@
 
 <dom-module id="app-page">
   <template>
-    <app-description parse-description={{parseDescription}}></app-description>
-
     <app-header header=[[_header(appData,parsedDescription)]] app=[[app]] auth-fetch=[[authFetch]] appmetadata-url=[[appmetadataUrl]]></app-header>
 
     <div class="app-container">
-      <app-tabs tabs=[[parsedDescription.tabs]]></app-tabs>
+      <app-tabs tabs=[[parsedDescription.tabs]] thumbnail=[[parsedDescription.props.thumbnail]]></app-tabs>
 
       <template is="dom-if" if=[[parsedDescription.props.reqbaz]]>
         <app-reqbaz project-id=[[parsedDescription.props.reqbaz]] auth-fetch=[[authFetch]]></app-reqbaz>

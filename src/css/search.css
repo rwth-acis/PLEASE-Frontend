@@ -1,0 +1,44 @@
+
+search-results a {
+  display: flex;
+  box-shadow: 1px 1px 10px #999;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 15px 0;
+}
+search-results a:hover {
+  border: 1px solid #000;
+}
+search-results a > div {
+  padding-left: 16px;
+}
+
+search-results img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+search-results .rating {
+  display: inline-block;
+  position: relative;
+}
+search-results .rating .back {
+  color: #ffffff;
+  text-shadow: 2px 2px 4px #aaaaaa;
+}
+search-results .rating .fore {
+  color: #fda900;
+  text-shadow: 2px 2px 4px #aaaaff;
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+search-results p {
+  overflow: hidden;
+  max-height: 80px;
+  width: 50%;
+  margin: auto;
+}

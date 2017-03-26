@@ -13,16 +13,19 @@
   <link rel="stylesheet" href="css/maintain.css">
   <link rel="stylesheet" href="css/jsoneditor.css">
   <link rel="stylesheet" href="css/app-create.css">
+  <link rel="stylesheet" href="css/search.css">
   <template>
     <please-header oidc-client-id=[[oidcClientId]] oidc-provider=[[oidcProvider]] auth-fetch={{authFetch}} appmetadata-url=[[appmetadataUrl]] query-url={{queryUrl}}></please-header>
     <div class="container">
       <iron-pages selected=[[selected]]>
-        <search-page appmetadata-url=[[appmetadataUrl]] query-url=[[queryUrl]]></search-page>
-        <app-page app=[[selectedApp]] appmetadata-url=[[appmetadataUrl]] servicerunner-url=[[servicerunnerUrl]] role-url=[[roleUrl]] auth-fetch=[[authFetch]]></app-page>
-        <app-create-page appmetadata-url=[[appmetadataUrl]] auth-fetch=[[authFetch]]></app-create-page>
+        <search-page appmetadata-url=[[appmetadataUrl]] query-url=[[queryUrl]] parse-description=[[parseDescription]]></search-page>
+        <app-page app=[[selectedApp]] appmetadata-url=[[appmetadataUrl]] servicerunner-url=[[servicerunnerUrl]] role-url=[[roleUrl]] auth-fetch=[[authFetch]] parse-description=[[parseDescription]]></app-page>
+        <app-create-page appmetadata-url=[[appmetadataUrl]] auth-fetch=[[authFetch]] parse-description=[[parseDescription]]></app-create-page>
       </iron-pages>
     </div>
     <div class="footer"></div>
+
+    <app-description parse-description={{parseDescription}}></app-description>
   </template>
 
   <script>

@@ -2,14 +2,14 @@ App ← :'\n'* Title? :'\n'* Props :'\n'* Tabs
 
 Title ← :'#' :' '* [^\n]+
 
-Props ← (:'@' (PropSource | PropKeywords | PropReqbaz | PropSupport | PropLicense | PropPic | PropUnknown) :'\n')*
+Props ← (:'@' (PropSource | PropKeywords | PropReqbaz | PropSupport | PropLicense | PropThumbnail | PropUnknown) :'\n')*
+PropReqbaz ← :'reqbaz ' [0-9]+
+PropThumbnail ← :'thumbnail ' [^\n]+
 PropSource ← :'source ' [^\n]+
 PropKeywords ← :'keywords ' (Keyword :' '?)+
 Keyword ← [^ \n]+
-PropReqbaz ← :'reqbaz ' [0-9]+
 PropSupport ← :'support ' [^\n]+
 PropLicense ← :'license ' [^\n]+
-PropPic ← :'picture ' [^\n]+
 PropUnknown ← [^\n]*
 
 Tabs ← Tab+

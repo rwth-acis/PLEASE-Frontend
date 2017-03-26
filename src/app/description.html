@@ -32,6 +32,7 @@
                   }
                   case 'Block': return {content: ast.children[0]}
                   case 'PropReqbaz': return {'reqbaz': ast.children[0]}
+                  case 'PropThumbnail': return {'thumbnail': ast.children[0]}
                   case 'PropUnknown': return {'unknown': ast.children[0]}
                   default: return ''
                 }
