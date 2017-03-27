@@ -57,6 +57,13 @@ app-tabs img {
   margin: auto;
   display: block;
 }
+@media only screen and (max-width: 750px) {
+  app-tabs img {
+    max-width: 200px;
+    max-height: 200px;
+  }
+}
+
 app-tabs .tabs {
   display: flex;
   flex-wrap: wrap;

@@ -23,7 +23,7 @@
     </template>
     <p>active:
       <template is="dom-repeat" items="[[deployments]]">
-        <strong>[[item]]</strong>
+        <a href="[[servicerunnerUrl]]/deployed/[[item]]/80/"><strong>[[item]]</strong></a>
       </template>
     </p>
   </template>
