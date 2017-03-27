@@ -12,9 +12,9 @@
           </div>
           <h3>[[item.description.title]]</h3>
         </div>
-        <p>
-          [[item.description.tabs.0.blocks.0.content]]
-        </p>
+        <div class="short">
+          <!-- the first description block goes here -->
+        </div>
       </a>
     </template>
   </template>
@@ -23,18 +23,17 @@
     Polymer({
       is: 'search-results',
       properties: {
-        results: {
-          type: Array,
-          value: () => [{
-            app: 7,
-            description: "some description",
-            rating: 3.78
-          },{
-            app: 14,
-            description: "not so nice app",
-            rating: 1.123
-          }]
-        }
+        results: { value: [] }
+      },
+      observers: ['update(results)'],
+      update: function() {
+        setTimeout(() => {
+          this.results.forEach((r,i) => {
+            div = this.root.host.children[i].children[2]
+            div.innerHTML = ""
+            div.appendChild(r.description.tabs[0].blocks[0])
+          })
+        })
       },
       _thumb: (t) => t ? t : ''
     });

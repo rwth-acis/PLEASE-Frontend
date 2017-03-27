@@ -134,6 +134,7 @@ app-comments .add-comment {
 }
 app-comments textarea {
   flex-grow: 1;
+  min-height: 50px;
 }
 app-comments .comment::before {
   content: "";

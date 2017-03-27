@@ -36,9 +36,14 @@ search-results .rating .fore {
   top: 0;
 }
 
-search-results p {
+search-results .short {
   overflow: hidden;
   max-height: 80px;
   width: 50%;
-  margin: auto;
+  margin: 0 auto;
+  padding: 0;
+  font-size: .8em;
+}
+search-results .short p {
+  margin: 0;
 }
