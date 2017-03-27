@@ -6,7 +6,8 @@ jsoneditor-array li {
   display: flex;
 }
 jsoneditor-array button {
-  border-radius: 15px 0 0 15px;
+  border-radius: 15px 15px 0 0;
+  width: 100%;
 }
 
 
@@ -17,9 +18,14 @@ jsoneditor-object input.set, input.added { color: #000; }
 jsoneditor-object input.duplicate { color: #aa0000; }
 jsoneditor-object {
   display: inline-block;
+  max-width: 100%;
+}
+jsoneditor-object * {
+  max-width: 100%;
 }
 jsoneditor-object li {
-  margin: 3px;
+  margin: 5px;
+  max-width: calc(100% - 10px);
   padding: 0;
 }
 jsoneditor-object input.added {
@@ -30,31 +36,49 @@ jsoneditor-object input:placeholder-shown {
 }
 jsoneditor-object input {
   background: rgba(66, 139, 192, .15);
-  border-radius: 15px 0 0 15px;
+  border-radius: 15px 15px 0 0;
   padding: 4px;
   font-size: .9em;
   border: none;
+  width: 100%;
+  text-align: center;
 }
 jsoneditor-object input ~ * {
   background: rgba(66, 139, 192, .15);
-  border-radius: 0 15px 15px 0;
+  border-radius: 0 0 15px 15px;
+  width: 100%;
 }
 jsoneditor-object ul {
   list-style: none;
   padding: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
 }
 jsoneditor-object li {
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 
 jsoneditor-string textarea {
   overflow: hidden;
+  width: 300px;
+  height: 300px;
+  min-width: 100%;
+  max-width: 100%;
+  max-height: 250px;
+  max-width: 250px;
   padding: 4px;
   resize: none;
   white-space: pre;
   border: none;
-  border-radius: 0 15px 15px 0;
+  border-radius: 0 0 15px 15px;
+}
+jsoneditor-string textarea:focus {
+  overflow: auto;
+  max-width: calc(100%);
+  max-height: calc(100%);
 }
 jsoneditor-string textarea::placeholder {
   color: #ddd;
@@ -63,5 +87,5 @@ jsoneditor-string textarea::placeholder {
 
 jsoneditor-enum select {
   padding: 4px;
-  border-radius: 0 15px 15px 0;
+  border-radius: 0 0 15px 15px;
 }

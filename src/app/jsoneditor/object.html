@@ -8,7 +8,7 @@
     <ul>
       <template id="list" is="dom-repeat" items="[[elements(schema,json,json.*)]]">
         <li>
-          <input disabled=[[isFixed(item.name,schema)]] class$=[[cssClass(item.name,json,schema)]] value=[[item.name]] on-input="updateKey">
+          <input disabled=[[isFixed(item.name,schema)]] class$=[[cssClass(item.name,json,schema)]] value=[[item.name]] on-input="updateKey" size="1">
           <template is="dom-if" if="[[equals(item.schema.type,'string')]]"><jsoneditor-string schema="[[item.schema]]" json="[[item.json]]" set-value=[[_setValue(item.name)]]></jsoneditor-string></template>
           <template is="dom-if" if="[[equals(item.schema.type,'object')]]"><jsoneditor-object schema="[[item.schema]]" json="[[item.json]]" set-value=[[_setValue(item.name)]]></jsoneditor-object></template>
           <template is="dom-if" if="[[equals(item.schema.type,'array')]]"><jsoneditor-array schema="[[item.schema]]" json="[[item.json]]" set-value=[[_setValue(item.name)]]></jsoneditor-array></template>
@@ -17,7 +17,7 @@
       </template>
       <template is="dom-if" if="[[notNull(schema.addProp)]]">
         <li>
-          <input placeholder=[[schema.addProp.name]] on-input="addProp">
+          <input placeholder=[[schema.addProp.name]] on-input="addProp" size="1">
         </li>
       </template>
     </ul>
@@ -27,7 +27,7 @@
     Polymer({
       observers: [
         'pressInSchema(json,schema,setValue)',
-        'resize(json)'
+        '_resize(json,schema)'
       ],
       is: 'jsoneditor-object',
       equals: (o1,o2) => o1 == o2,
@@ -43,19 +43,16 @@
       _setValue: function(key) {
         return (function(key,value){this.set(`json.${key}`, value);this.setValue(this.json)}).bind(this,key)
       },
-      attached: function() {
-        setTimeout(this.resize.bind(this))
-      },
+      _resize: function() {setTimeout(this.resize.bind(this),100)},
       resize: function() {
-        // console.log(Object.keys(this.json)[0])
         for(li of this.$.list.parentElement.children) {
-          if(li.tagName != 'LI') break
+          if(li.tagName != 'LI') continue
           inp = li.children[0]
           // get size at beginning, workaround issue when not visible
           dummy = inp.cloneNode()
-          dummy.style = "width:0; padding:4px"
           document.body.append(dummy)
-          inp.style.width = dummy.scrollWidth + 8
+          dummy.style.minWidth = "0"
+          inp.style.minWidth = dummy.scrollWidth + 16 + 'px'
           document.body.removeChild(dummy)
         }
       },
@@ -96,7 +93,7 @@
         ((schema.props || {})[key] != null && ! json[key]) ? 'unset' :
         (!(schema.props || {})[key] != null && json[key] != null) ? 'added' : '',
       pressInSchema: function(json,schema,setValue) {
-        if(!json || !schema || !setValue) return
+        if(!json || !schema || schema.type != 'object' || !setValue) return
         _json = Object.assign({},json)
         change = false
         Object.keys(_json).concat(schema.required || []).forEach(k => {

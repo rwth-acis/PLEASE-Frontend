@@ -22,7 +22,7 @@ so far using callback
         // resize
         this.$.ta.style.height = 0
         this.$.ta.style.width = 0
-        this.$.ta.style.height = this.$.ta.scrollHeight
+        this.$.ta.style.height = this.$.ta.scrollHeight + 8
         this.$.ta.style.width = this.$.ta.scrollWidth + 8
       },
       attached: function() {
@@ -33,8 +33,11 @@ so far using callback
         dummy = this.$.ta.cloneNode()
         dummy.style = "width:0; height:0; resize:none; overflow:hidden; white-space:pre; padding:4px"
         document.body.append(dummy)
+        o = this.$.ta.style.overflow
+        this.$.ta.style.overflow = 'hidden'
         this.$.ta.style.height = dummy.scrollHeight
         this.$.ta.style.width = dummy.scrollWidth + 8
+        this.$.ta.style.overflow = o
         document.body.removeChild(dummy)
       }
     });
