@@ -10,7 +10,7 @@
     <app-header header=[[_header(appData,parsedDescription)]]></app-header>
 
     <div class="app-container">
-      <app-tabs tabs=[[parsedDescription.tabs]]></app-tabs>
+      <app-tabs tabs=[[parsedDescription.tabs]] thumbnail=[[parsedDescription.props.thumbnail]]></app-tabs>
 
       <template is="dom-if" if=[[parsedDescription.props.reqbaz]]>
         <app-reqbaz project-id=[[parsedDescription.props.reqbaz]] auth-fetch=[[authFetch]]></app-reqbaz>
